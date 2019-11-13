@@ -1,10 +1,19 @@
 '''
 Created on Nov 8, 2019
 
-There will have two config files:
--- partitionComm.cfg: this file will indicate the common parameters like number of processors, memories etc.
--- partitionName.cfg: this file will indicate the partition name, it have several sections
-                      each section have a group of names.
+Configuration include two sections in config.cfg file
+-- [connection] section include the HMC and CPC information
+-- [storage] section include the created storage groups parameters
+   -- <commondict> dictionary include the storage groups common parameters
+      e.g. storage group type, description, path volume properties and email list
+      every generated storage groups have the same parameters indicated in this dictionary
+   -- <storage volume> dictionary include a group of storage volumes configuration in a storage group
+      for example, 1boot16 means the configuration include 1 volume, its type is boot and the volume size is 16.03
+   -- <storage group name> array include the storage groups' name to be created
+      this option must be indicated in the command line as a parameter 
+   
+e.g.
+python createStorageGroups.py ubuntu_data
 
 @author: mayijie
 '''
@@ -27,7 +36,7 @@ class createStorageGroups:
         # construct storage volumes template
         try:
             svsTempl = list()
-            for sv in eval(self.svCommDict[self.sgCommDict['sgvolume']]):
+            for sv in self.svCommDict[self.sgCommDict['sgvolume']]:
                 svTempl = dict()
                 svTempl['operation'] = 'create'
                 if (sv.has_key('storVolDesc') and sv['storVolDesc'] != ''):
@@ -69,36 +78,33 @@ class createStorageGroups:
             print "[EXCEPTION constructSgTemplate]", exc
             raise exc
 
-        for sgName in sgNameList:
+        for sgName in self.sgNameList:
             sgTempl['name'] = sgName
             
             try:
                 self.dpmObj.client.consoles.console.storage_groups.create(sgTempl)
+                print sgName, "created success !"
             except (zhmcclient.HTTPError, zhmcclient.ParseError) as e:
-                pass
+                print sgName, "created failed !"
             time.sleep(1)
             
         print "createStorageGroups completed ..."
 
-sgCommCfg = 'sgComm.cfg'
-sgNameCfg = 'sgName.cfg'
+cf = 'config.cfg'
 
 if __name__ == '__main__':
     if len(sys.argv) == 2:
-        sgNameSecName = sys.argv[1]
+        sgNameSection = sys.argv[1]
     else:
         print ("Please input the storage group name array as a parameter!\nQuitting....")
         exit(1)
     
-    configComm = configFile(sgCommCfg)
+    configComm = configFile(cf)
     configComm.loadConfig()
     dpmConnDict = configComm.sectionDict['connection']
-    sgCommDict = configComm.sectionDict['sgCommon']
-    svCommDict = configComm.sectionDict['svCommon']
-    
-    configName = configFile(sgNameCfg)
-    configName.loadConfig()
-    sgNameList = eval(configName.sectionDict['sgGroup'][sgNameSecName])
-    
+    sgCommDict = eval(configComm.sectionDict['storage']['commondict'])
+    svCommDict = eval(configComm.sectionDict['storage']['svdict'])
+    sgNameList = eval(configComm.sectionDict['storage'][sgNameSection])
+
     sgCreation = createStorageGroups(dpmConnDict, sgCommDict, svCommDict, sgNameList)
     sgCreation.start()

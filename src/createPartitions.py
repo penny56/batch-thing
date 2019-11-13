@@ -1,10 +1,17 @@
 '''
 Created on Nov 7, 2019
 
-There will have two config files:
--- partitionComm.cfg: this file will indicate the common parameters like number of processors, memories etc.
--- partitionName.cfg: this file will indicate the partition name, it have several sections
-                      each section have a group of names.
+Configuration include two sections in config.cfg file
+-- [connection] section include the HMC and CPC information
+-- [partition] section include the created partitions parameters
+   -- <commondict> dictionary include the partition common parameters
+      e.g. type and number of processor, memory
+      and descriptions, every generated partition have the same parameters indicated in this dictionary
+   -- <partition name> array include the partition names to be created
+      this option must be indicated in the command line as a parameter 
+   
+e.g.
+python createPartitions.py ubuntu
 
 @author: mayijie
 '''
@@ -44,37 +51,27 @@ class createPartitions:
             
             try:
                 new_partition = self.dpmObj.cpc.partitions.create(partitionTempl)
+                print partName, "created success !"
             except (zhmcclient.HTTPError, zhmcclient.ParseError) as e:
-                pass
-            time.sleep(1)
-            
-            try:
-                parRet = self.dpmObj.cpc.partitions.find(name = partitionTempl["name"])
-                self.dpmObj.partition = parRet
-            except zhmcclient.NotFound as e:
-                pass
+                print partName, "created failed !"
             time.sleep(1)
             
         print "createPartitions completed ..."
 
-partCommCfg = 'partitionComm.cfg'
-partNameCfg = 'partitionName.cfg'
+cf = 'config.cfg'
 
 if __name__ == '__main__':
     if len(sys.argv) == 2:
-        partNameSecName = sys.argv[1]
+        partNameSection = sys.argv[1]
     else:
         print ("Please input the partition name array as a parameter!\nQuitting....")
         exit(1)
     
-    configComm = configFile(partCommCfg)
+    configComm = configFile(cf)
     configComm.loadConfig()
     dpmConnDict = configComm.sectionDict['connection']
-    partCommDict = configComm.sectionDict['partCommon']
-    
-    configName = configFile(partNameCfg)
-    configName.loadConfig()
-    partNameList = eval(configName.sectionDict['partGroup'][partNameSecName])
+    partCommDict = eval(configComm.sectionDict['partition']['commondict'])
+    partNameList = eval(configComm.sectionDict['partition'][partNameSection])
     
     partCreation = createPartitions(dpmConnDict, partCommDict, partNameList)
     partCreation.start()

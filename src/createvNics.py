@@ -1,31 +1,16 @@
 '''
 Created on Nov 12, 2019
 
-There will have one config file:
-vnicComm.cfg ////////////////////////////////
-[10dotAccess]
-
-vnicnamesuffix = 10Dot_AccessMode_VLAN1292
-vnicdesc = 10 Dot Network Access Mode VLAN 1292
-vnicdevnum = 1000
-vnicadaptername = OSD 0230 Z25B-17
-/////////////////////////////////////////////
-
-partitionName.cfg
-/////////////////////////////////////////////
-[partGroup]
-testdistro = ['part1',
-              'part2',
-              'part3'
-              ]
-/////////////////////////////////////////////
-
-This script will create one vNic in each partition in partitionName.cfg
+Configuration include two sections in config.cfg file
+-- [connection] section include the HMC and CPC information
+-- [network] section include the created vNic parameters
+   -- <commondict> dictionary include the vNics common parameters
+      like vNic name, device number, description and adapter information
+   -- <partition name> array include the partitions' name which the vNics will be created in
+      this option must be indicated in the command line as a parameter
 
 e.g.
-
-python createvNics.py 10dotAccess testdistro
-
+python createvNics.py rhel 
 
 @author: mayijie
 '''
@@ -46,7 +31,7 @@ class createvNics:
         
         # Check if the adapter exist.
         try:
-            adapter = self.dpmObj.cpc.adapters.find(name = self.vnicCommDict["vnicadaptername"])
+            adapter = self.dpmObj.cpc.adapters.find(name = self.vnicCommDict["adaptername"])
         except zhmcclient.NotFound as e:
             pass
         
@@ -54,52 +39,47 @@ class createvNics:
         vswitches = self.dpmObj.cpc.virtual_switches.findall(**{'backing-adapter-uri': adapter.uri})
         vswitch = None
         for vs in vswitches:
-            if vs.get_property('port') == int(self.vnicCommDict["vnicadapterport"]):
+            if vs.get_property('port') == int(self.vnicCommDict["adapterport"]):
                 vswitch = vs
                 break
         
         # Construct the vNic template
         vnicTempl = dict()
-        vnicTempl["description"] = self.vnicCommDict["vnicdesc"]
-        vnicTempl["device-number"] = self.vnicCommDict["vnicdevnum"]
+        vnicTempl["description"] = self.vnicCommDict["desc"]
+        vnicTempl["device-number"] = self.vnicCommDict["devnum"]
         vnicTempl["virtual-switch-uri"] = vswitch.uri
         
         for partName in self.partNameList:
             # get the partition
             partObj = self.dpmObj.cpc.partitions.find(name = partName)
             
-            vnicTempl["name"] = partName + '_' + self.vnicCommDict["vnicnamesuffix"]
+            vnicTempl["name"] = partName + '_' + self.vnicCommDict["namesuffix"]
             
             # Create the vNic
             try:
                 new_vnic = partObj.nics.create(vnicTempl)
+                print "vNic", vnicTempl["name"], "in partition", partName, "created success !"
             except zhmcclient.HTTPError as e:
-                pass
-
+                print "vNic", vnicTempl["name"], "in partition", partName, "created failed !"
             time.sleep(1)
-            
+
         print "createvNics completed ..."
 
-vnicCommCfg = 'vnicComm.cfg'
-partNameCfg = 'partitionName.cfg'
+cf = 'config.cfg'
 
 if __name__ == '__main__':
-    if len(sys.argv) == 3:
-        vnicCommSecName = sys.argv[1]
-        partNameSecName = sys.argv[2]
+    if len(sys.argv) == 2:
+        vnicSection = sys.argv[1]
         
     else:
-        print ("Please input the vNic section, and partition name array as parameters!\nQuitting....")
+        print ("Please input the vNic creation model as a parameter!\nQuitting....")
         exit(1)
     
-    configComm = configFile(vnicCommCfg)
+    configComm = configFile(cf)
     configComm.loadConfig()
     dpmConnDict = configComm.sectionDict['connection']
-    vnicCommDict = configComm.sectionDict[vnicCommSecName]
+    vnicCommDict = eval(configComm.sectionDict['network']['commondict'])
+    partNameList = eval(configComm.sectionDict['network'][vnicSection])
 
-    configName = configFile(partNameCfg)
-    configName.loadConfig()
-    partNameList = eval(configName.sectionDict['partGroup'][partNameSecName])
-    
     vNicCreation = createvNics(dpmConnDict, vnicCommDict, partNameList)
     vNicCreation.start()
