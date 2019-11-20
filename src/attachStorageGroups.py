@@ -4,12 +4,13 @@ Created on Nov 13, 2019
 Configuration include two sections in config.cfg file
 -- [connection] section include the HMC and CPC information
 -- [attachment] section include the attachment parameters
-   -- <commondict> dictionary include the partitions, storage groups and the device number information
+   -- <partition dictionary> dictionary include the partitions, storage groups and the device number information
       the partition name as the keys of the dictionary, the values are also a dictionary,
       in the sub-dictionary, the keys are the storage groups' name, and the values are the device number array.
+      this option must be indicated in the command line as a parameter
    
 e.g.
-python attachStorageGroups.py
+python attachStorageGroups.py suse
 
 @author: mayijie
 '''
@@ -43,7 +44,8 @@ class attachStorageGroups:
                 
                 # update the device numbers
                 self.updateDeviceNumbers(sgObj, devnumArray)
-            
+            time.sleep(1)
+
         print "attachStorageGroups completed ..."
 
     def getStorageGroupEntity (self, sgName):
@@ -92,11 +94,16 @@ class attachStorageGroups:
 cf = 'config.cfg'
 
 if __name__ == '__main__':
-    
+    if len(sys.argv) == 2:
+        partNameSection = sys.argv[1]
+    else:
+        print ("Please input the partition attachment dictionary as a parameter!\nQuitting....")
+        exit(1)
+
     configComm = configFile(cf)
     configComm.loadConfig()
     dpmConnDict = configComm.sectionDict['connection']
-    attachCommDict = eval(configComm.sectionDict['attachment']['commondict'])
+    attachCommDict = eval(configComm.sectionDict['attachment'][partNameSection])
     
     attachment = attachStorageGroups(dpmConnDict, attachCommDict)
     attachment.start()
