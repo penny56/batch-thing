@@ -3,7 +3,7 @@ Created on Nov 12, 2019
 
 Configuration include two sections in config.cfg file
 -- [connection] section include the HMC and CPC information
--- [network] section include the created vNic parameters
+-- [partition] section include the created vNic parameters
    -- <commondict> dictionary include the vNics common parameters
       like vNic name, device number, description and adapter information
    -- <partition name> array include the partitions' name which the vNics will be created in
@@ -19,6 +19,7 @@ import sys, time
 import zhmcclient
 from configFile import configFile
 from dpm import dpm
+from log import log
 
 class createvNics:
     def __init__(self, dpmConnDict, vnicCommDict, partNameList):
@@ -26,6 +27,7 @@ class createvNics:
         self.dpmObj = dpm(dpmConnDict)
         self.vnicCommDict = vnicCommDict
         self.partNameList = partNameList
+        self.logger = log.getlogger(self.__class__.__name__)
 
     def start(self):
         
@@ -58,28 +60,27 @@ class createvNics:
             # Create the vNic
             try:
                 new_vnic = partObj.nics.create(vnicTempl)
-                print "vNic", vnicTempl["name"], "in partition", partName, "created success !"
+                self.logger.info("vNic", vnicTempl["name"], "in partition", partName, "created success !")
             except zhmcclient.HTTPError as e:
-                print "vNic", vnicTempl["name"], "in partition", partName, "created failed !"
+                self.logger.info("vNic", vnicTempl["name"], "in partition", partName, "created failed !")
             time.sleep(1)
 
         print "createvNics completed ..."
 
-cf = 'config.cfg'
 
 if __name__ == '__main__':
     if len(sys.argv) == 2:
-        vnicSection = sys.argv[1]
+        partNameSection = sys.argv[1]
         
     else:
         print ("Please input the vNic creation model as a parameter!\nQuitting....")
         exit(1)
     
-    configComm = configFile(cf)
+    configComm = configFile(None)
     configComm.loadConfig()
     dpmConnDict = configComm.sectionDict['connection']
     vnicCommDict = eval(configComm.sectionDict['network']['commondict'])
-    partNameList = eval(configComm.sectionDict['network'][vnicSection])
+    partNameList = eval(configComm.sectionDict['partition'][partNameSection])
 
     vNicCreation = createvNics(dpmConnDict, vnicCommDict, partNameList)
     vNicCreation.start()

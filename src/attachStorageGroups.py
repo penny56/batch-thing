@@ -19,12 +19,14 @@ import sys, time
 import zhmcclient
 from configFile import configFile
 from dpm import dpm
+from log import log
 
 class attachStorageGroups:
     def __init__(self, dpmConnDict, attachCommDict):
         
         self.dpmObj = dpm(dpmConnDict)
         self.attachCommDict = attachCommDict
+        self.logger = log.getlogger(self.__class__.__name__)
 
     def start(self):
         
@@ -37,9 +39,9 @@ class attachStorageGroups:
                 # attach the storage group to the partition
                 try:
                     partObj.attach_storage_group(sgObj)
-                    print "Partition", partName, "attach storage group", sgName, "success !"
+                    self.logger.info("Partition", partName, "attach storage group", sgName, "success !")
                 except zhmcclient.HTTPError as e:
-                    print "Partition", partName, "attach storage group", sgName, "failed !"
+                    self.logger.info("Partition", partName, "attach storage group", sgName, "failed !")
                     return None
                 
                 # update the device numbers
@@ -91,7 +93,6 @@ class attachStorageGroups:
         adapterObjs = self.dpmObj.cpc.adapters.list(full_properties=True, filter_args=filter_args)
         return adapterObjs[0].get_property("description")
 
-cf = 'config.cfg'
 
 if __name__ == '__main__':
     if len(sys.argv) == 2:
@@ -100,7 +101,7 @@ if __name__ == '__main__':
         print ("Please input the partition attachment dictionary as a parameter!\nQuitting....")
         exit(1)
 
-    configComm = configFile(cf)
+    configComm = configFile(None)
     configComm.loadConfig()
     dpmConnDict = configComm.sectionDict['connection']
     attachCommDict = eval(configComm.sectionDict['attachment'][partNameSection])

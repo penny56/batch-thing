@@ -11,8 +11,13 @@ import ConfigParser
 
 class configFile:
     
+    defaultCF = 'config.cfg'
+    
     def __init__(self, location):
-        self.config = location
+        if location == None:
+            self.config = self.defaultCF
+        else:
+            self.config = location
         self.sectionDict = {}
         
     def loadConfig(self):

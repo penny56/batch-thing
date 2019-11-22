@@ -20,6 +20,7 @@ import sys, time
 import zhmcclient
 from configFile import configFile
 from dpm import dpm
+from log import log
 
 class createPartitions:
     def __init__(self, dpmConnDict, partCommDict, partNameList):
@@ -27,6 +28,7 @@ class createPartitions:
         self.dpmObj = dpm(dpmConnDict)
         self.partCommDict = partCommDict
         self.partNameList = partNameList
+        self.logger = log.getlogger(self.__class__.__name__)
 
     def start(self):
         
@@ -46,19 +48,18 @@ class createPartitions:
         else:
             partitionTempl["maximum-memory"] = int(self.partCommDict["max_mem"])
         
-        for partName in partNameList:
+        for partName in self.partNameList:
             partitionTempl["name"] = partName
             
             try:
                 new_partition = self.dpmObj.cpc.partitions.create(partitionTempl)
-                print partName, "created success !"
+                self.logger.info(partName, "created success !")
             except (zhmcclient.HTTPError, zhmcclient.ParseError) as e:
-                print partName, "created failed !"
+                self.logger.info(partName, "created failed !")
             time.sleep(1)
             
         print "createPartitions completed ..."
 
-cf = 'config.cfg'
 
 if __name__ == '__main__':
     if len(sys.argv) == 2:
@@ -67,7 +68,7 @@ if __name__ == '__main__':
         print ("Please input the partition name array as a parameter!\nQuitting....")
         exit(1)
     
-    configComm = configFile(cf)
+    configComm = configFile(None)
     configComm.loadConfig()
     dpmConnDict = configComm.sectionDict['connection']
     partCommDict = eval(configComm.sectionDict['partition']['commondict'])
