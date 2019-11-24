@@ -79,9 +79,9 @@ class createStorageGroups:
             
             try:
                 self.dpmObj.client.consoles.console.storage_groups.create(sgTempl)
-                self.logger.info(sgName, "created success !")
+                self.logger.info(sgName + " created success !")
             except (zhmcclient.HTTPError, zhmcclient.ParseError) as e:
-                self.logger.info(sgName, "created failed !")
+                self.logger.info(sgName + " created failed !")
             time.sleep(1)
             
         print "createStorageGroups completed ..."
@@ -101,5 +101,5 @@ if __name__ == '__main__':
     svCommDict = eval(configComm.sectionDict['storage']['svdict'])
     sgNameList = eval(configComm.sectionDict['storage'][sgNameSection])
 
-    sgCreation = createStorageGroups(dpmConnDict, sgCommDict, svCommDict, sgNameList)
-    sgCreation.start()
+    sgObj = createStorageGroups(dpmConnDict, sgCommDict, svCommDict, sgNameList)
+    sgObj.start()

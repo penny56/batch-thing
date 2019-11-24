@@ -53,5 +53,5 @@ if __name__ == '__main__':
     dpmConnDict = configComm.sectionDict['connection']
     partNameList = eval(configComm.sectionDict['partition'][partNameSection])
     
-    partCreation = checkPartitionStatus(dpmConnDict, partNameList)
-    partCreation.start()
+    checkObj = checkPartitionStatus(dpmConnDict, partNameList)
+    checkObj.start()

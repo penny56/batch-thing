@@ -60,9 +60,9 @@ class createvNics:
             # Create the vNic
             try:
                 new_vnic = partObj.nics.create(vnicTempl)
-                self.logger.info("vNic", vnicTempl["name"], "in partition", partName, "created success !")
+                self.logger.info("vNic " + vnicTempl["name"] + " in partition " + partName + " created success !")
             except zhmcclient.HTTPError as e:
-                self.logger.info("vNic", vnicTempl["name"], "in partition", partName, "created failed !")
+                self.logger.info("vNic " + vnicTempl["name"] + " in partition " + partName + " created failed !")
             time.sleep(1)
 
         print "createvNics completed ..."
@@ -82,5 +82,5 @@ if __name__ == '__main__':
     vnicCommDict = eval(configComm.sectionDict['network']['commondict'])
     partNameList = eval(configComm.sectionDict['partition'][partNameSection])
 
-    vNicCreation = createvNics(dpmConnDict, vnicCommDict, partNameList)
-    vNicCreation.start()
+    vNicObj = createvNics(dpmConnDict, vnicCommDict, partNameList)
+    vNicObj.start()

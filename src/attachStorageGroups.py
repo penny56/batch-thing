@@ -39,9 +39,9 @@ class attachStorageGroups:
                 # attach the storage group to the partition
                 try:
                     partObj.attach_storage_group(sgObj)
-                    self.logger.info("Partition", partName, "attach storage group", sgName, "success !")
+                    self.logger.info("Partition " + partName + " attach storage group " + sgName + " success !")
                 except zhmcclient.HTTPError as e:
-                    self.logger.info("Partition", partName, "attach storage group", sgName, "failed !")
+                    self.logger.info("Partition " + partName + " attach storage group " + sgName + " failed !")
                     return None
                 
                 # update the device numbers
@@ -106,5 +106,5 @@ if __name__ == '__main__':
     dpmConnDict = configComm.sectionDict['connection']
     attachCommDict = eval(configComm.sectionDict['attachment'][partNameSection])
     
-    attachment = attachStorageGroups(dpmConnDict, attachCommDict)
-    attachment.start()
+    attachObj = attachStorageGroups(dpmConnDict, attachCommDict)
+    attachObj.start()

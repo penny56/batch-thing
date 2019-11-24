@@ -18,7 +18,8 @@ class log:
         
         logger = logging.getLogger(name)
         logger.setLevel(level = logging.INFO)
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(message)s')
+        #formatter = logging.Formatter('%(asctime)s - %(name)s - %(message)s')
+        formatter = logging.Formatter('%(asctime)s - %(message)s')
         
         fileLog = logging.FileHandler(name + '.log')
         fileLog.setFormatter(formatter)

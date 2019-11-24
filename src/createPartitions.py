@@ -53,9 +53,9 @@ class createPartitions:
             
             try:
                 new_partition = self.dpmObj.cpc.partitions.create(partitionTempl)
-                self.logger.info(partName, "created success !")
+                self.logger.info(partName + " created success !")
             except (zhmcclient.HTTPError, zhmcclient.ParseError) as e:
-                self.logger.info(partName, "created failed !")
+                self.logger.info(partName + " created failed !")
             time.sleep(1)
             
         print "createPartitions completed ..."
@@ -74,5 +74,5 @@ if __name__ == '__main__':
     partCommDict = eval(configComm.sectionDict['partition']['commondict'])
     partNameList = eval(configComm.sectionDict['partition'][partNameSection])
     
-    partCreation = createPartitions(dpmConnDict, partCommDict, partNameList)
-    partCreation.start()
+    partObj = createPartitions(dpmConnDict, partCommDict, partNameList)
+    partObj.start()
