@@ -4,7 +4,6 @@ Created on Jan 16, 2019
 @author: mayijie
 '''
 
-import sys
 import zhmcclient
 import requests.packages.urllib3
 requests.packages.urllib3.disable_warnings()
