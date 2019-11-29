@@ -20,9 +20,9 @@ from dpm import dpm
 from log import log
 
 class changePartitionStatus:
-    def __init__(self, dpmConnDict, partNameList):
+    def __init__(self, partNameList):
         
-        self.dpmObj = dpm(dpmConnDict)
+        self.dpmObj = dpm()
         self.partNameList = partNameList
         self.logger = log.getlogger(self.__class__.__name__)
         # identify how many start/stop action will be executed totally
@@ -30,8 +30,10 @@ class changePartitionStatus:
         # identify the wait time until the start/stop action completed, 600 = 10mins
         self.timeout = 600
 
-    def start(self):
+
+    def run(self):
         
+        print "changePartitionStatus starting >>>"
         # Check partition status
         for i in range(self.counter):
             partName = self.partNameList[i % len(self.partNameList)]
@@ -39,13 +41,13 @@ class changePartitionStatus:
             if str(partObj.get_property('status')) == 'active':
                 timespan = self.stopPartition(partObj)
                 if timespan:
-                    self.logger.info(partName + " stop succeed " + timespan)
+                    self.logger.info(partName + " stop successful " + timespan)
                 else:
                     self.logger.info(partName + " stop failed !!!")
             elif str(partObj.get_property('status')) == 'stopped':
                 timespan = self.startPartition(partObj)
                 if timespan:
-                    self.logger.info(partName + " start succeed " + timespan)
+                    self.logger.info(partName + " start successful " + timespan)
                 else:
                     self.logger.info(partName + " start failed !!!")
             else:
@@ -84,8 +86,7 @@ if __name__ == '__main__':
     
     configComm = configFile(None)
     configComm.loadConfig()
-    dpmConnDict = configComm.sectionDict['connection']
     partNameList = eval(configComm.sectionDict['partition'][partNameSection])
     
-    changeObj = changePartitionStatus(dpmConnDict, partNameList)
-    changeObj.start()
+    changeObj = changePartitionStatus(partNameList)
+    changeObj.run()

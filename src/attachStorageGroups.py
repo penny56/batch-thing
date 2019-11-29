@@ -22,45 +22,76 @@ from dpm import dpm
 from log import log
 
 class attachStorageGroups:
-    def __init__(self, dpmConnDict, attachCommDict):
+    def __init__(self, attachCommDict):
         
-        self.dpmObj = dpm(dpmConnDict)
+        self.dpmObj = dpm()
         self.attachCommDict = attachCommDict
         self.logger = log.getlogger(self.__class__.__name__)
 
-    def start(self):
-        
+    def run(self):
+
+        print "attachStorageGroups starting >>>"
         for partName,  sgDict in self.attachCommDict.items():
             partObj = self.dpmObj.cpc.partitions.find(name = partName)
             
             for sgName, devnumArray in sgDict.items():
-                sgObj = self.getStorageGroupEntity (sgName)
-                
+                ret = self.getStorageGroupEntity (sgName)
+                if ret['success']:
+                    sgObj = ret['object']
+                else:
+                    self.logger.info("Partition " + partName + " attach storage group " + sgName + ret['object'] + " failed !!!")
+                    continue
+
                 # attach the storage group to the partition
                 try:
                     partObj.attach_storage_group(sgObj)
-                    self.logger.info("Partition " + partName + " attach storage group " + sgName + " success !")
-                except zhmcclient.HTTPError as e:
-                    self.logger.info("Partition " + partName + " attach storage group " + sgName + " failed !")
-                    return None
+                    self.logger.info("Partition " + partName + " attach storage group " + sgName + " successful")
+                except Exception as e:
+                    self.logger.info("Partition " + partName + " attach storage group " + sgName + " exception failed !!!")
+                    
                 
                 # update the device numbers
-                self.updateDeviceNumbers(sgObj, devnumArray)
+
+                # devnumArray[:] is a slice of devnumArray but with a new object
+                # we use this to avoid the pop operation impact the original
+                self.updateDeviceNumbers(sgObj, devnumArray[:])
+            
             time.sleep(1)
 
         print "attachStorageGroups completed ..."
 
+    '''
+    Verify and return the Storage Group entity by storage group name
+    
+    return:
+        {'success': True/False,
+         'object': <sgObj>/[None]
+         }
+    '''
     def getStorageGroupEntity (self, sgName):
+
+        result = dict()
         
         try:
             for cpcSg in self.dpmObj.cpc.list_associated_storage_groups():
-                if cpcSg.get_property('type') == 'fcp' and cpcSg.get_property('fulfillment-state') == 'complete' and cpcSg.get_property('name') == sgName:
-                    return cpcSg
+                if cpcSg.get_property('name') == sgName:
+                    if cpcSg.get_property('fulfillment-state') == 'complete':
+                        result['success'] = True
+                        result['object'] = cpcSg
+                    else:
+                        result['success'] = False
+                        result['object'] = "not in complete state"
+            if not result:
+                result['success'] = False
+                result['object'] = "could not found"
         except zhmcclient.HTTPError as e:
-            return None
+            result['success'] = False
+            result['object'] = "Exception occurred"
+        
+        return result
         
     def updateDeviceNumbers(self, sgObj, devnumArray):
-        
+
         try:
             vsrs = sgObj.virtual_storage_resources.list()
         except zhmcclient.HTTPError:
@@ -88,6 +119,7 @@ class attachStorageGroups:
             return None
 
     def getAdapterDesc(self, adapterPortUri):
+
         adapterUri = adapterPortUri.split('/storage-ports/')[0]
         filter_args = {'object-uri': adapterUri}
         adapterObjs = self.dpmObj.cpc.adapters.list(full_properties=True, filter_args=filter_args)
@@ -103,8 +135,7 @@ if __name__ == '__main__':
 
     configComm = configFile(None)
     configComm.loadConfig()
-    dpmConnDict = configComm.sectionDict['connection']
     attachCommDict = eval(configComm.sectionDict['attachment'][partNameSection])
     
-    attachObj = attachStorageGroups(dpmConnDict, attachCommDict)
-    attachObj.start()
+    attachObj = attachStorageGroups(attachCommDict)
+    attachObj.run()

@@ -20,9 +20,9 @@ from dpm import dpm
 from log import log
 
 class startPartitions:
-    def __init__(self, dpmConnDict, partNameList):
+    def __init__(self, partNameList):
         
-        self.dpmObj = dpm(dpmConnDict)
+        self.dpmObj = dpm()
         self.partNameList = partNameList
         self.logger = log.getlogger(self.__class__.__name__)
         # identify the wait time until the start/stop action completed, 600 = 10mins
@@ -31,12 +31,14 @@ class startPartitions:
         self.timespan = dict()
         
 
-    def start(self):
+    def run(self):
+
+        print "startPartitions starting >>>"
         for partName in self.partNameList:
             try:
                 partObj = self.dpmObj.cpc.partitions.find(name = partName)
             except Exception as e:
-                self.logger.info(partName + " start failed -- couldn't find")
+                self.logger.info(partName + " start failed -- couldn't find !!!")
                 continue
             if str(partObj.get_property('status')) == 'stopped':
                 start = int(time.time())
@@ -46,7 +48,7 @@ class startPartitions:
                     self.logger.info(partName + " start failed !!!")
                     continue
                 end = int(time.time())
-                self.logger.info(partName + " start succeed " + str(end - start))
+                self.logger.info(partName + " start successful " + str(end - start))
                 self.timespan[partName] = str(end - start)
 
         print "startPartitions completed ..."
@@ -61,8 +63,7 @@ if __name__ == '__main__':
     
     configComm = configFile(None)
     configComm.loadConfig()
-    dpmConnDict = configComm.sectionDict['connection']
     partNameList = eval(configComm.sectionDict['partition'][partNameSection])
     
-    startObj = startPartitions(dpmConnDict, partNameList)
-    startObj.start()
+    startObj = startPartitions(partNameList)
+    startObj.run()

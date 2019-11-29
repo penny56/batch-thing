@@ -22,15 +22,17 @@ from dpm import dpm
 from log import log
 
 class createvNics:
-    def __init__(self, dpmConnDict, vnicCommDict, partNameList):
+    def __init__(self, vnicCommDict, partNameList):
         
-        self.dpmObj = dpm(dpmConnDict)
+        self.dpmObj = dpm()
         self.vnicCommDict = vnicCommDict
         self.partNameList = partNameList
         self.logger = log.getlogger(self.__class__.__name__)
 
-    def start(self):
-        
+
+    def run(self):
+
+        print "createvNics starting >>>"
         # Check if the adapter exist.
         try:
             adapter = self.dpmObj.cpc.adapters.find(name = self.vnicCommDict["adaptername"])
@@ -60,9 +62,9 @@ class createvNics:
             # Create the vNic
             try:
                 new_vnic = partObj.nics.create(vnicTempl)
-                self.logger.info("vNic " + vnicTempl["name"] + " in partition " + partName + " created success !")
+                self.logger.info("vNic " + vnicTempl["name"] + " in partition " + partName + " created successful")
             except zhmcclient.HTTPError as e:
-                self.logger.info("vNic " + vnicTempl["name"] + " in partition " + partName + " created failed !")
+                self.logger.info("vNic " + vnicTempl["name"] + " in partition " + partName + " created failed !!!")
             time.sleep(1)
 
         print "createvNics completed ..."
@@ -78,9 +80,8 @@ if __name__ == '__main__':
     
     configComm = configFile(None)
     configComm.loadConfig()
-    dpmConnDict = configComm.sectionDict['connection']
     vnicCommDict = eval(configComm.sectionDict['network']['commondict'])
     partNameList = eval(configComm.sectionDict['partition'][partNameSection])
 
-    vNicObj = createvNics(dpmConnDict, vnicCommDict, partNameList)
-    vNicObj.start()
+    vNicObj = createvNics(vnicCommDict, partNameList)
+    vNicObj.run()

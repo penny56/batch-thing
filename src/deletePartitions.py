@@ -13,20 +13,23 @@ python createPartitions.py ubuntu
 @author: mayijie
 '''
 
-import sys, time
+import sys
 import zhmcclient
 from configFile import configFile
 from dpm import dpm
 from log import log
 
 class deletePartitions:
-    def __init__(self, dpmConnDict, partNameList):
+    def __init__(self, partNameList):
         
-        self.dpmObj = dpm(dpmConnDict)
+        self.dpmObj = dpm()
         self.partNameList = partNameList
         self.logger = log.getlogger(self.__class__.__name__)
 
-    def start(self):
+
+    def run(self):
+
+        print "deletePartitions starting >>>"
         for partName in self.partNameList:
             try:
                 partObj = self.dpmObj.cpc.partitions.find(name = partName)
@@ -35,11 +38,12 @@ class deletePartitions:
             if str(partObj.get_property('status')) == 'stopped':
                 try:
                     partObj.delete()
-                    self.logger.info(partName + " delete succeed ")
+                    self.logger.info(partName + " delete successful ")
                 except (zhmcclient.HTTPError, Exception) as e:
-                    self.logger.info(partName + " delete failed ")
+                    self.logger.info(partName + " delete failed !!!")
             else:
-                self.logger.info(partName + " delete failed for in " + str(partObj.get_property('status')) + " state")
+                self.logger.info(partName + " delete failed for in " + str(partObj.get_property('status')) + " state !!!")
+        
         print "deletePartitions completed ..."
 
 
@@ -52,8 +56,7 @@ if __name__ == '__main__':
     
     configComm = configFile(None)
     configComm.loadConfig()
-    dpmConnDict = configComm.sectionDict['connection']
     partNameList = eval(configComm.sectionDict['partition'][partNameSection])
     
-    deleteObj = deletePartitions(dpmConnDict, partNameList)
-    deleteObj.start()
+    deleteObj = deletePartitions(partNameList)
+    deleteObj.run()

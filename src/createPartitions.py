@@ -23,15 +23,17 @@ from dpm import dpm
 from log import log
 
 class createPartitions:
-    def __init__(self, dpmConnDict, partCommDict, partNameList):
+    def __init__(self, partCommDict, partNameList):
         
-        self.dpmObj = dpm(dpmConnDict)
+        self.dpmObj = dpm()
         self.partCommDict = partCommDict
         self.partNameList = partNameList
         self.logger = log.getlogger(self.__class__.__name__)
 
-    def start(self):
+
+    def run(self):
         
+        print "createPartitions starting >>>"
         # construct partition template
         partitionTempl = dict()
         partitionTempl["type"] = self.partCommDict["par_type"]
@@ -53,9 +55,9 @@ class createPartitions:
             
             try:
                 new_partition = self.dpmObj.cpc.partitions.create(partitionTempl)
-                self.logger.info(partName + " created success !")
+                self.logger.info(partName + " created successful")
             except (zhmcclient.HTTPError, zhmcclient.ParseError) as e:
-                self.logger.info(partName + " created failed !")
+                self.logger.info(partName + " created failed !!!")
             time.sleep(1)
             
         print "createPartitions completed ..."
@@ -70,9 +72,8 @@ if __name__ == '__main__':
     
     configComm = configFile(None)
     configComm.loadConfig()
-    dpmConnDict = configComm.sectionDict['connection']
     partCommDict = eval(configComm.sectionDict['partition']['commondict'])
     partNameList = eval(configComm.sectionDict['partition'][partNameSection])
     
-    partObj = createPartitions(dpmConnDict, partCommDict, partNameList)
-    partObj.start()
+    partObj = createPartitions(partCommDict, partNameList)
+    partObj.run()

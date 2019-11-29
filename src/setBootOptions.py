@@ -29,14 +29,16 @@ from dpm import dpm
 from log import log
 
 class setBootOptions:
-    def __init__(self, dpmConnDict, bootCommDict):
+    def __init__(self, bootCommDict):
         
-        self.dpmObj = dpm(dpmConnDict)
+        self.dpmObj = dpm()
         self.bootCommDict = bootCommDict
         self.logger = log.getlogger(self.__class__.__name__)
 
-    def start(self):
+
+    def run(self):
         
+        print "setBootOptions starting >>>"
         for partName, sg_sv in self.bootCommDict.items():
             partObj = self.dpmObj.cpc.partitions.find(name = partName)
             sgName = sg_sv.split(' ')[0]
@@ -50,9 +52,9 @@ class setBootOptions:
                 bootTempl2 = dict()
                 bootTempl2['boot-device'] = 'storage-volume'
                 partObj.update_properties(bootTempl2)
-                self.logger.info("partition " + partName + " set boot option success !")
+                self.logger.info("partition " + partName + " set boot option successful")
             except Exception as e:
-                self.logger.info("partition " + partName + " set boot option sg: " + sgName + ", sv UUID: " + svUUID + ", failed !")
+                self.logger.info("partition " + partName + " set boot option sg: " + sgName + ", sv UUID: " + svUUID + ", failed !!!")
             
             time.sleep(1)
 
@@ -69,8 +71,7 @@ if __name__ == '__main__':
     
     configComm = configFile(None)
     configComm.loadConfig()
-    dpmConnDict = configComm.sectionDict['connection']
     bootCommDict = eval(configComm.sectionDict['bootoption'][bootOptionDict])
 
-    bootObj = setBootOptions(dpmConnDict, bootCommDict)
-    bootObj.start()
+    bootObj = setBootOptions(bootCommDict)
+    bootObj.run()

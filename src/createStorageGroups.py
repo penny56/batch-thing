@@ -25,16 +25,18 @@ from dpm import dpm
 from log import log
 
 class createStorageGroups:
-    def __init__(self, dpmConnDict, sgCommDict, svCommDict, sgNameList):
+    def __init__(self, sgCommDict, svCommDict, sgNameList):
         
-        self.dpmObj = dpm(dpmConnDict)
+        self.dpmObj = dpm()
         self.sgCommDict = sgCommDict
         self.svCommDict = svCommDict
         self.sgNameList = sgNameList
         self.logger = log.getlogger(self.__class__.__name__)
 
-    def start(self):
+
+    def run(self):
         
+        print "createStorageGroups starting >>>"
         # construct storage volumes template
         svsTempl = list()
         for sv in self.svCommDict[self.sgCommDict['sgvolume']]:
@@ -79,9 +81,9 @@ class createStorageGroups:
             
             try:
                 self.dpmObj.client.consoles.console.storage_groups.create(sgTempl)
-                self.logger.info(sgName + " created success !")
+                self.logger.info(sgName + " created successful")
             except (zhmcclient.HTTPError, zhmcclient.ParseError) as e:
-                self.logger.info(sgName + " created failed !")
+                self.logger.info(sgName + " created failed !!!")
             time.sleep(1)
             
         print "createStorageGroups completed ..."
@@ -96,10 +98,9 @@ if __name__ == '__main__':
     
     configComm = configFile(None)
     configComm.loadConfig()
-    dpmConnDict = configComm.sectionDict['connection']
     sgCommDict = eval(configComm.sectionDict['storage']['commondict'])
     svCommDict = eval(configComm.sectionDict['storage']['svdict'])
     sgNameList = eval(configComm.sectionDict['storage'][sgNameSection])
 
-    sgObj = createStorageGroups(dpmConnDict, sgCommDict, svCommDict, sgNameList)
-    sgObj.start()
+    sgObj = createStorageGroups(sgCommDict, svCommDict, sgNameList)
+    sgObj.run()

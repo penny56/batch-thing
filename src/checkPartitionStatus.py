@@ -20,14 +20,16 @@ from dpm import dpm
 from log import log
 
 class checkPartitionStatus:
-    def __init__(self, dpmConnDict, partNameList):
+    def __init__(self, partNameList):
         
-        self.dpmObj = dpm(dpmConnDict)
+        self.dpmObj = dpm()
         self.partNameList = partNameList
         self.logger = log.getlogger(self.__class__.__name__)
 
-    def start(self):
-                
+
+    def run(self):
+        
+        print "checkPartitionStatus starting >>>"
         for partName in self.partNameList:
             
             try:
@@ -50,8 +52,7 @@ if __name__ == '__main__':
     
     configComm = configFile(None)
     configComm.loadConfig()
-    dpmConnDict = configComm.sectionDict['connection']
     partNameList = eval(configComm.sectionDict['partition'][partNameSection])
     
-    checkObj = checkPartitionStatus(dpmConnDict, partNameList)
-    checkObj.start()
+    checkObj = checkPartitionStatus(partNameList)
+    checkObj.run()

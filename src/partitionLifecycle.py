@@ -26,40 +26,48 @@ from attachStorageGroups import attachStorageGroups
 from setBootOptions import setBootOptions
 from startPartitions import startPartitions
 
+
 class partitionLifecycle:
-    def __init__(self, dpmConnDict, partCommDict, partNameList, vnicCommDict, attachCommDict, bootCommDict):
+    def __init__(self, partCommDict, partNameList, vnicCommDict, attachCommDict, bootCommDict):
         
-        self.dpmObj = dpm(dpmConnDict)
+        self.dpmObj = dpm()
         self.partCommDict = partCommDict
         self.partNameList = partNameList
         self.vnicCommDict = vnicCommDict
         self.attachCommDict = attachCommDict
         self.bootCommDict = bootCommDict
-        self.counter = 3
+        self.counter = 2
         self.logger = log.getlogger(self.__class__.__name__)
 
-    def start(self, dpmConnDict):
-        
+    def run(self):
+
+        print "partitionLifecycle starting >>>"
+        stopObj = stopPartitions(self.partNameList)
+        delObj = deletePartitions(self.partNameList)
+        createObj = createPartitions(self.partCommDict, self.partNameList)
+        vNicObj = createvNics(self.vnicCommDict, self.partNameList)
+        attachObj = attachStorageGroups(self.attachCommDict)
+        bootObj = setBootOptions(self.bootCommDict)
+        startObj = startPartitions(self.partNameList)
+
         for i in range(self.counter):
-            stopObj = stopPartitions(dpmConnDict, self.partNameList)
-            stopObj.start()
-            delObj = deletePartitions(dpmConnDict, self.partNameList)
-            delObj.start()
-            createObj = createPartitions(dpmConnDict, self.partCommDict, self.partNameList)
-            createObj.start()
-            vNicObj = createvNics(dpmConnDict, self.vnicCommDict, self.partNameList)
-            vNicObj.start()
-            attachObj = attachStorageGroups(dpmConnDict, self.attachCommDict)
-            attachObj.start()
-            bootObj = setBootOptions(dpmConnDict, self.bootCommDict)
-            bootObj.start()
-            startObj = startPartitions(dpmConnDict, self.partNameList)
-            startObj.start()
+            stopObj.run()
+            for partName, timespan in stopObj.timespan.items():
+                self.logger.info(partName + " stop successful " + timespan)
+            # ??? Sometimes delete partition failed due to in stopping state
+            time.sleep(30)
+            delObj.run()
+            createObj.run()
+            vNicObj.run()
+            attachObj.run()
+            bootObj.run()
+            startObj.run()
             for partName, timespan in startObj.timespan.items():
-                self.logger.info(partName + " start timespan " + timespan)
+                self.logger.info(partName + " start successful " + timespan)
             
-            time.sleep(60)
-        
+            print "partitionLifecycle sleeping -----------------------------------------------> 30s ..."
+            time.sleep(30)
+            
         print "partitionLifecycle completed ..."
 
 
@@ -72,7 +80,6 @@ if __name__ == '__main__':
     
     configComm = configFile(None)
     configComm.loadConfig()
-    dpmConnDict = configComm.sectionDict['connection']
     partDict = eval(configComm.sectionDict['lifecycle'][partDict])
 
     partCommDict = eval(configComm.sectionDict['partition']['commondict'])
@@ -81,5 +88,5 @@ if __name__ == '__main__':
     attachCommDict = eval(configComm.sectionDict['attachment'][partDict['attachment']])
     bootCommDict = eval(configComm.sectionDict['bootoption'][partDict['bootoption']])
     
-    lifecycleObj = partitionLifecycle(dpmConnDict, partCommDict, partNameList, vnicCommDict, attachCommDict, bootCommDict)    
-    lifecycleObj.start(dpmConnDict)
+    lifecycleObj = partitionLifecycle(partCommDict, partNameList, vnicCommDict, attachCommDict, bootCommDict)    
+    lifecycleObj.run()

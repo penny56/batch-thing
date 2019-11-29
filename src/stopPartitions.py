@@ -20,21 +20,27 @@ from dpm import dpm
 from log import log
 
 class stopPartitions:
-    def __init__(self, dpmConnDict, partNameList):
+    def __init__(self, partNameList):
         
-        self.dpmObj = dpm(dpmConnDict)
+        self.dpmObj = dpm()
         self.partNameList = partNameList
         self.logger = log.getlogger(self.__class__.__name__)
         # identify the wait time until the start/stop action completed, 600 = 10mins
         self.timeout = 600
+        # To out put to lifecycle module
+        self.timespan = dict()
 
-    def start(self):
+
+    def run(self):
+
+        print "stopPartitions starting >>>"
         for partName in self.partNameList:
             try:
                 partObj = self.dpmObj.cpc.partitions.find(name = partName)
             except Exception as e:
-                self.logger.info(partName + " stop failed -- couldn't find")
+                self.logger.info(partName + " stop failed -- couldn't find !!!")
                 continue
+            # ??? exception: HTTPError: 404,1: Not found or not authorized [GET /api/partitions/d64092b6-1116-11ea-b8df-00106f24553e]
             if str(partObj.get_property('status')) != 'stopped':
                 start = int(time.time())
                 try:
@@ -43,7 +49,8 @@ class stopPartitions:
                     self.logger.info(partName + " stop failed !!!")
                     continue
                 end = int(time.time())
-                self.logger.info(partName + " stop succeed " + str(end - start))
+                self.logger.info(partName + " stop successful " + str(end - start))
+                self.timespan[partName] = str(end - start)
 
         print "stopPartitions completed ..."
 
@@ -57,8 +64,7 @@ if __name__ == '__main__':
     
     configComm = configFile(None)
     configComm.loadConfig()
-    dpmConnDict = configComm.sectionDict['connection']
     partNameList = eval(configComm.sectionDict['partition'][partNameSection])
     
-    stopObj = stopPartitions(dpmConnDict, partNameList)
-    stopObj.start()
+    stopObj = stopPartitions(partNameList)
+    stopObj.run()
