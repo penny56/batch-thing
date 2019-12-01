@@ -39,7 +39,7 @@ class attachStorageGroups:
                 if ret['success']:
                     sgObj = ret['object']
                 else:
-                    self.logger.info("Partition " + partName + " attach storage group " + sgName + ret['object'] + " failed !!!")
+                    self.logger.info("Partition " + partName + " attach storage group " + sgName + " " + ret['object'] + " failed !!!")
                     continue
 
                 # attach the storage group to the partition

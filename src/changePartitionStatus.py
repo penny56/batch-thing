@@ -26,7 +26,7 @@ class changePartitionStatus:
         self.partNameList = partNameList
         self.logger = log.getlogger(self.__class__.__name__)
         # identify how many start/stop action will be executed totally
-        self.counter = 10000
+        self.counter = 6
         # identify the wait time until the start/stop action completed, 600 = 10mins
         self.timeout = 600
 
