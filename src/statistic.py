@@ -91,7 +91,6 @@ class statistic:
         mailHeader += '******************************************************************\n\n'
         
         self.content += mailHeader
-        self.content += "Partitions in stopped state:\n"
         for failedPartition in failedPartitions:
             self.content += failedPartition + '\n'
         self.content += '\n'   
@@ -116,7 +115,6 @@ class statistic:
         mailHeader += '******************************************************************\n\n'
         
         self.content += mailHeader
-        self.content += "Storage groups in pending state:\n"
         for pendingStorageGroup in pendingStorageGroups:
             self.content += pendingStorageGroup + '\n'
         self.content += '\n'
@@ -126,7 +124,6 @@ class statistic:
         mailHeader += '******************************************************************\n\n'
         
         self.content += mailHeader
-        self.content += "Storage groups in incomplete state:\n"
         for incompleteStorageGroup in incompleteStorageGroups:
             self.content += incompleteStorageGroup + '\n'
         self.content += '\n'
