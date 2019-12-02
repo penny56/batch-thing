@@ -87,7 +87,7 @@ class statistic:
                 failedPartitions.append(record.split(' - ')[-1].split(' ')[0])
 
         mailHeader = '******************************************************************\n'
-        mailHeader += '********* stopped partitions *************************************\n'
+        mailHeader += '********* stopped partitions (kvm & lnx partitions) **************\n'
         mailHeader += '******************************************************************\n\n'
         
         self.content += mailHeader
@@ -95,7 +95,42 @@ class statistic:
         for failedPartition in failedPartitions:
             self.content += failedPartition + '\n'
         self.content += '\n'   
+
+    # mail the storage groups not in complete state
+    def checkStorageGroupsStatus(self, cf):
         
+        with open(cf) as fp:
+            records = fp.readlines()
+        
+        pendingStorageGroups = []
+        incompleteStorageGroups = []
+        
+        for record in records:
+            if str(date.today()) in record and "in pending state" in record:
+                pendingStorageGroups.append(record.split(' - ')[-1].split(' ')[0])
+            if str(date.today()) in record and "in incomplete state" in record:
+                incompleteStorageGroups.append(record.split(' - ')[-1].split(' ')[0])
+
+        mailHeader = '******************************************************************\n'
+        mailHeader += '********* storage groups in pending state ************************\n'
+        mailHeader += '******************************************************************\n\n'
+        
+        self.content += mailHeader
+        self.content += "Storage groups in pending state:\n"
+        for pendingStorageGroup in pendingStorageGroups:
+            self.content += pendingStorageGroup + '\n'
+        self.content += '\n'
+
+        mailHeader = '******************************************************************\n'
+        mailHeader += '********* storage groups in incomplete state *********************\n'
+        mailHeader += '******************************************************************\n\n'
+        
+        self.content += mailHeader
+        self.content += "Storage groups in incomplete state:\n"
+        for incompleteStorageGroup in incompleteStorageGroups:
+            self.content += incompleteStorageGroup + '\n'
+        self.content += '\n'
+
     def sendMail(self):
         
         # construct the mail parameters
@@ -123,6 +158,9 @@ if __name__ == '__main__':
     
     # mail the stopped partition names
     statObj.checkPartitionStatus('checkPartitionStatus.log')
+    
+    # mail the storage groups not in complete state
+    statObj.checkStorageGroupsStatus('checkStorageGroupsStatus.log')
     
     statObj.sendMail()
     
