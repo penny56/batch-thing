@@ -18,11 +18,11 @@ class statistic:
         self.mailHost = '9.12.23.17'
         self.mailSubject = 'T90 statistic'
         self.mailFrom = 'DPM_Auto'
-        self.mailTo = ['mayijie@cn.ibm.com', 'liwbj@cn.ibm.com', 'lbcruz@us.ibm.com', 'jrossi@us.ibm.com']
-        #self.mailTo = ['mayijie@cn.ibm.com']
+        #self.mailTo = ['mayijie@cn.ibm.com', 'liwbj@cn.ibm.com', 'lbcruz@us.ibm.com', 'jrossi@us.ibm.com']
+        self.mailTo = ['mayijie@cn.ibm.com']
         self.content = ''
 
-    def startChangePartitionStatus(self, cf):
+    def changePartitionStatus(self, cf):
         
         with open(cf) as fp:
             records = fp.readlines()
@@ -74,7 +74,7 @@ class statistic:
         if len(stopTimeSpans) != 0:
             self.content += "The average start time span is " + str(int(sum(stopTimeSpans)/len(stopTimeSpans))) + " seconds\n\n"
 
-    # mail the stopped partition names
+    # mail the partitions not in active state
     def checkPartitionStatus(self, cf):
         
         with open(cf) as fp:
@@ -83,16 +83,16 @@ class statistic:
         failedPartitions = []
         
         for record in records:
-            if str(date.today()) in record and "stopped state" in record:
-                failedPartitions.append(record.split(' - ')[-1].split(' ')[0])
+            if str(date.today()) in record and "active state" not in record:
+                failedPartitions.append(record.split(' - ')[-1])
 
         mailHeader = '******************************************************************\n'
-        mailHeader += '********* stopped partitions (kvm & lnx partitions) **************\n'
+        mailHeader += '********* Non-active partitions (kvm & lnx partitions) ***********\n'
         mailHeader += '******************************************************************\n\n'
-        
+
         self.content += mailHeader
         for failedPartition in failedPartitions:
-            self.content += failedPartition + '\n'
+            self.content += failedPartition
         self.content += '\n'   
 
     # mail the storage groups not in complete state
@@ -105,27 +105,16 @@ class statistic:
         incompleteStorageGroups = []
         
         for record in records:
-            if str(date.today()) in record and "in pending state" in record:
-                pendingStorageGroups.append(record.split(' - ')[-1].split(' ')[0])
-            if str(date.today()) in record and "in incomplete state" in record:
-                incompleteStorageGroups.append(record.split(' - ')[-1].split(' ')[0])
+            if str(date.today()) in record and "complete state" not in record:
+                pendingStorageGroups.append(record.split(' - ')[-1])
 
         mailHeader = '******************************************************************\n'
-        mailHeader += '********* storage groups in pending state ************************\n'
+        mailHeader += '********* Non-complete storage groups ****************************\n'
         mailHeader += '******************************************************************\n\n'
         
         self.content += mailHeader
         for pendingStorageGroup in pendingStorageGroups:
-            self.content += pendingStorageGroup + '\n'
-        self.content += '\n'
-
-        mailHeader = '******************************************************************\n'
-        mailHeader += '********* storage groups in incomplete state *********************\n'
-        mailHeader += '******************************************************************\n\n'
-        
-        self.content += mailHeader
-        for incompleteStorageGroup in incompleteStorageGroups:
-            self.content += incompleteStorageGroup + '\n'
+            self.content += pendingStorageGroup
         self.content += '\n'
 
     def sendMail(self):
@@ -148,7 +137,7 @@ if __name__ == '__main__':
 
     statObj = statistic()
     # mail the partitions start/stop average time span
-    statObj.startChangePartitionStatus('changePartitionStatus.log')
+    statObj.changePartitionStatus('changePartitionStatus.log')
     
     # mail the new created partitions start/stop average time span
     statObj.partitionLifecycle('partitionLifecycle.log')
