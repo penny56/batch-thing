@@ -16,10 +16,10 @@ class statistic:
         self.logger = log.getlogger(self.__class__.__name__)
         # email
         self.mailHost = '9.12.23.17'
-        self.mailSubject = 'T90 statistic'
+        self.mailSubject = '[T90 statistic] - [' + str(date.today()) + ']'
         self.mailFrom = 'DPM_Auto'
-        #self.mailTo = ['mayijie@cn.ibm.com', 'liwbj@cn.ibm.com', 'lbcruz@us.ibm.com', 'jrossi@us.ibm.com']
-        self.mailTo = ['mayijie@cn.ibm.com']
+        self.mailTo = ['mayijie@cn.ibm.com', 'liwbj@cn.ibm.com', 'lbcruz@us.ibm.com', 'jrossi@us.ibm.com']
+        #self.mailTo = ['mayijie@cn.ibm.com']
         self.content = ''
 
     def changePartitionStatus(self, cf):
@@ -43,10 +43,14 @@ class statistic:
         self.content += mailHeader
         self.content += "Total " + str(len(startTimeSpans)) + " partitions was started\n"
         if len(startTimeSpans) != 0:
-            self.content += "The average start time span is " + str(int(sum(startTimeSpans)/len(startTimeSpans))) + " seconds\n\n"
+            self.content += "The maximum start time span is " + str(max(startTimeSpans)) + " seconds\n"
+            self.content += "The average start time span is " + str(int(sum(startTimeSpans)/len(startTimeSpans))) + " seconds\n"
+            self.content += "The minimum start time span is " + str(min(startTimeSpans)) + " seconds\n\n"
         self.content += "Total " + str(len(stopTimeSpans)) + " partitions was stopped\n"
         if len(stopTimeSpans) != 0:
-            self.content += "The average start time span is " + str(int(sum(stopTimeSpans)/len(stopTimeSpans))) + " seconds\n\n"
+            self.content += "The maximum stop time span is " + str(max(stopTimeSpans)) + " seconds\n"
+            self.content += "The average stop time span is " + str(int(sum(stopTimeSpans)/len(stopTimeSpans))) + " seconds\n"
+            self.content += "The minimum stop time span is " + str(min(stopTimeSpans)) + " seconds\n\n"
 
     def partitionLifecycle(self, cf):
         
@@ -69,10 +73,14 @@ class statistic:
         self.content += mailHeader
         self.content += "Total " + str(len(startTimeSpans)) + " partitions was started\n"
         if len(startTimeSpans) != 0:
-            self.content += "The average start time span is " + str(int(sum(startTimeSpans)/len(startTimeSpans))) + " seconds\n\n"
+            self.content += "The maximum start time span is " + str(max(startTimeSpans)) + " seconds\n"
+            self.content += "The average start time span is " + str(int(sum(startTimeSpans)/len(startTimeSpans))) + " seconds\n"
+            self.content += "The minimum start time span is " + str(min(startTimeSpans)) + " seconds\n\n"
         self.content += "Total " + str(len(stopTimeSpans)) + " partitions was stopped\n"
         if len(stopTimeSpans) != 0:
-            self.content += "The average start time span is " + str(int(sum(stopTimeSpans)/len(stopTimeSpans))) + " seconds\n\n"
+            self.content += "The maximum stop time span is " + str(max(stopTimeSpans)) + " seconds\n"
+            self.content += "The average stop time span is " + str(int(sum(stopTimeSpans)/len(stopTimeSpans))) + " seconds\n"
+            self.content += "The minimum stop time span is " + str(min(stopTimeSpans)) + " seconds\n\n"
 
     # mail the partitions not in active state
     def checkPartitionStatus(self, cf):
@@ -80,19 +88,22 @@ class statistic:
         with open(cf) as fp:
             records = fp.readlines()
         
-        failedPartitions = []
+        nonActiveParts = []
         
         for record in records:
             if str(date.today()) in record and "active state" not in record:
-                failedPartitions.append(record.split(' - ')[-1])
+                nonActiveParts.append(record.split(' - ')[-1])
+
+        # remove the redundant records
+        nonActiveParts = list(set(nonActiveParts))
 
         mailHeader = '******************************************************************\n'
         mailHeader += '********* Non-active partitions (kvm & lnx partitions) ***********\n'
         mailHeader += '******************************************************************\n\n'
 
         self.content += mailHeader
-        for failedPartition in failedPartitions:
-            self.content += failedPartition
+        for nonActivePart in nonActiveParts:
+            self.content += nonActivePart
         self.content += '\n'   
 
     # mail the storage groups not in complete state
@@ -101,20 +112,22 @@ class statistic:
         with open(cf) as fp:
             records = fp.readlines()
         
-        pendingStorageGroups = []
-        incompleteStorageGroups = []
+        nonCompleteSgs = []
         
         for record in records:
-            if str(date.today()) in record and "complete state" not in record:
-                pendingStorageGroups.append(record.split(' - ')[-1])
+            if str(date.today()) in record and "in complete state" not in record:
+                nonCompleteSgs.append(record.split(' - ')[-1])
+
+        # remove the redundant records
+        nonCompleteSgs = list(set(nonCompleteSgs))
 
         mailHeader = '******************************************************************\n'
         mailHeader += '********* Non-complete storage groups ****************************\n'
         mailHeader += '******************************************************************\n\n'
         
         self.content += mailHeader
-        for pendingStorageGroup in pendingStorageGroups:
-            self.content += pendingStorageGroup
+        for nonCompleteSg in nonCompleteSgs:
+            self.content += nonCompleteSg
         self.content += '\n'
 
     def sendMail(self):
