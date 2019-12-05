@@ -36,23 +36,24 @@ class changePartitionStatus:
         print "changePartitionStatus starting >>>"
         # Check partition status
         for i in range(self.counter):
-            partName = self.partNameList[i % len(self.partNameList)]
-            partObj = self.dpmObj.cpc.partitions.find(name = partName)
-            if str(partObj.get_property('status')) == 'active':
-                timespan = self.stopPartition(partObj)
-                if timespan:
-                    self.logger.info(partName + " stop successful " + timespan)
+            for partName in self.partNameList:
+                partObj = self.dpmObj.cpc.partitions.find(name = partName)
+                if str(partObj.get_property('status')) == 'active':
+                    timespan = self.stopPartition(partObj)
+                    if timespan:
+                        self.logger.info(partName + " stop successful " + timespan)
+                    else:
+                        self.logger.info(partName + " stop failed !!!")
+                elif str(partObj.get_property('status')) == 'stopped':
+                    timespan = self.startPartition(partObj)
+                    if timespan:
+                        self.logger.info(partName + " start successful " + timespan)
+                    else:
+                        self.logger.info(partName + " start failed !!!")
                 else:
-                    self.logger.info(partName + " stop failed !!!")
-            elif str(partObj.get_property('status')) == 'stopped':
-                timespan = self.startPartition(partObj)
-                if timespan:
-                    self.logger.info(partName + " start successful " + timespan)
-                else:
-                    self.logger.info(partName + " start failed !!!")
-            else:
-                # wait for the next loop
-                pass
+                    # wait for the next loop
+                    pass
+
         print "changePartitionStatus completed ..."
 
     def startPartition(self, partObj):
