@@ -4,6 +4,7 @@ Created on Nov 24, 2019
 @author: mayijie
 '''
 
+from datetime import *
 from datetime import date
 from log import log
 import smtplib
@@ -18,8 +19,8 @@ class statistic:
         self.mailHost = '9.12.23.17'
         self.mailSubject = '[T90 statistic] - [' + str(date.today()) + ']'
         self.mailFrom = 'DPM_Auto'
-        self.mailTo = ['mayijie@cn.ibm.com', 'liwbj@cn.ibm.com', 'lbcruz@us.ibm.com', 'jrossi@us.ibm.com']
-        #self.mailTo = ['mayijie@cn.ibm.com']
+        #self.mailTo = ['mayijie@cn.ibm.com', 'liwbj@cn.ibm.com', 'lbcruz@us.ibm.com', 'jrossi@us.ibm.com']
+        self.mailTo = ['mayijie@cn.ibm.com']
         self.content = ''
 
     def changePartitionStatus(self, cf):
@@ -83,15 +84,17 @@ class statistic:
             self.content += "The minimum stop time span is " + str(min(stopTimeSpans)) + " seconds\n\n"
 
     # mail the partitions not in active state
+    # For checking function, we not only check today, but check the same hour within today
     def checkPartitionStatus(self, cf):
         
         with open(cf) as fp:
             records = fp.readlines()
         
         nonActiveParts = []
-        
+        # dateHour like '2020-03-10 15'
+        dateHour = str(datetime.now()).split(':')[0]
         for record in records:
-            if str(date.today()) in record and "active state" not in record:
+            if dateHour in record and "active state" not in record:
                 nonActiveParts.append(record.split(' - ')[-1])
 
         # remove the redundant records
@@ -107,15 +110,17 @@ class statistic:
         self.content += '\n'   
 
     # mail the storage groups not in complete state
+    # For checking function, we not only check today, but check the same hour within today
     def checkStorageGroupsStatus(self, cf):
         
         with open(cf) as fp:
             records = fp.readlines()
         
         nonCompleteSgs = []
-        
+        # dateHour like '2020-03-10 15'
+        dateHour = str(datetime.now()).split(':')[0]
         for record in records:
-            if str(date.today()) in record and "in complete state" not in record:
+            if dateHour in record and "in complete state" not in record:
                 nonCompleteSgs.append(record.split(' - ')[-1])
 
         # remove the redundant records
