@@ -16,7 +16,9 @@ class statistic:
         self.cf = None
         self.logger = log.getlogger(self.__class__.__name__)
         # email
-        self.mailHost = '9.12.23.17'
+        #self.mailHost = '9.12.23.17'
+        # use the rhel server in Ring Cloud instead of rundeck server for rundeck server could not connect the slack server
+        self.mailHost = '9.112.234.95'
         self.mailSubject = '[T90 statistic] - [' + str(date.today()) + ']'
         self.mailFrom = 'DPM_Auto'
         #self.mailTo = ['mayijie@cn.ibm.com', 'liwbj@cn.ibm.com', 'lbcruz@us.ibm.com', 'jrossi@us.ibm.com']
