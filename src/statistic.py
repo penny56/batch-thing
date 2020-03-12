@@ -22,6 +22,7 @@ class statistic:
         #self.mailTo = ['mayijie@cn.ibm.com', 'liwbj@cn.ibm.com', 'lbcruz@us.ibm.com', 'jrossi@us.ibm.com']
         #self.mailTo = ['o3v0h9d0m0s8t5h0@ibm-systems-z.slack.com']
         self.mailTo = ['mayijie@cn.ibm.com']
+        self.mailCc = ['w8a3m8t5g8q5q3g0@ibm-systems-z.slack.com']
         self.content = ''
 
     def changePartitionStatus(self, cf):
@@ -142,12 +143,16 @@ class statistic:
         msg = MIMEText(self.content, 'plain', 'utf-8')
         msg['From'] = self.mailFrom
         msg['To'] = ','.join(self.mailTo)
+        #
+        msg['Cc'] = ','.join(self.mailCc)
+        toaddrs = msg['To'] + msg['Cc']
+        #
         msg['Subject'] = self.mailSubject
         
         # send the mail
         try:
             smtpObj = smtplib.SMTP(self.mailHost, 25)
-            smtpObj.sendmail(self.mailFrom, self.mailTo, msg.as_string())
+            smtpObj.sendmail(self.mailFrom, toaddrs, msg.as_string())
             smtpObj.quit()
         except Exception as e:
             print "Error..mail.."
