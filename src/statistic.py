@@ -17,12 +17,11 @@ class statistic:
         self.logger = log.getlogger(self.__class__.__name__)
         # email
         #self.mailHost = '9.12.23.17'
-        # use the rhel server in Ring Cloud instead of rundeck server for rundeck server could not connect the slack server
-        self.mailHost = '9.112.234.95'
+        # use the IBM official smtp server
+        self.mailHost = 'na.relay.ibm.com'
         self.mailSubject = '[T90 statistic] - [' + str(date.today()) + ']'
         self.mailFrom = 'DPM_Auto'
-        #self.mailTo = ['mayijie@cn.ibm.com', 'liwbj@cn.ibm.com', 'lbcruz@us.ibm.com', 'jrossi@us.ibm.com']
-        self.mailTo = ["o3v0h9d0m0s8t5h0@ibm-systems-z.slack.com"]
+        #self.mailTo = ['mayijie@cn.ibm.com', 'liwbj@cn.ibm.com', 'lbcruz@us.ibm.com', 'jrossi@us.ibm.com', 'w8a3m8t5g8q5q3g0@ibm-systems-z.slack.com']
         #self.mailTo = ['mayijie@cn.ibm.com']
         self.content = ''
 
