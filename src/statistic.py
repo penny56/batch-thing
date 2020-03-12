@@ -20,7 +20,7 @@ class statistic:
         self.mailSubject = '[T90 statistic] - [' + str(date.today()) + ']'
         self.mailFrom = 'DPM_Auto'
         #self.mailTo = ['mayijie@cn.ibm.com', 'liwbj@cn.ibm.com', 'lbcruz@us.ibm.com', 'jrossi@us.ibm.com']
-        self.mailTo = ['mayijie@cn.ibm.com', 'liwbj@cn.ibm.com', 'lbcruz@us.ibm.com', 'jrossi@us.ibm.com', 'o3v0h9d0m0s8t5h0@ibm-systems-z.slack.com']
+        self.mailTo = ['w8a3m8t5g8q5q3g0@ibm-systems-z.slack.com']
         #self.mailTo = ['mayijie@cn.ibm.com']
         self.content = ''
 
