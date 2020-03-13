@@ -179,10 +179,10 @@ if __name__ == '__main__':
     statObj.checkStorageGroupsStatus(configComm.sectionDict['connection']['cpc'] + '-' + 'checkStorageGroupsStatus.log')
     
     # mail the partitions start/stop average time span
-    statObj.changePartitionStatus('changePartitionStatus.log')
+    statObj.changePartitionStatus(configComm.sectionDict['connection']['cpc'] + '-' + 'changePartitionStatus.log')
     
     # mail the new created partitions start/stop average time span
-    statObj.partitionLifecycle('partitionLifecycle.log')
+    statObj.partitionLifecycle(configComm.sectionDict['connection']['cpc'] + '-' + 'partitionLifecycle.log')
     
     statObj.sendMail()
     
