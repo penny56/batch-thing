@@ -3,12 +3,12 @@ Created on Dec 2, 2019
 
 Configuration include two sections in config.cfg file
 -- [connection] section include the HMC and CPC information
--- [partition] section include the partitions name
-   -- <partition name> array include the partition names to be checked
-      this option must be indicated in the command line as a parameter 
-   
+-- [storage] section include the storage groups name
+   -- <storage group name> array include the storage group names to be checked
+   -- if you would like to check all the partitions, input <all>
+
 e.g.
-python createPartitions.py longevity
+python checkStorageGroupsStatus.py t257.cfg all
 
 @author: mayijie
 '''
@@ -22,9 +22,9 @@ from log import log
 class checkStorageGroupsStatus:
     def __init__(self, sgNameList):
         
-        self.dpmObj = dpm()
+        self.dpmObj = dpm(cf)
         self.sgNameList = sgNameList
-        self.logger = log.getlogger(self.__class__.__name__)
+        self.logger = log.getlogger(configComm.sectionDict['connection']['cpc'] + '-' + self.__class__.__name__)
 
 
     def run(self):
@@ -43,14 +43,20 @@ class checkStorageGroupsStatus:
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 2:
-        sgNameSection = sys.argv[1]
+    if len(sys.argv) == 3:
+        cf = sys.argv[1]
+        sgNameSection = sys.argv[2]
     else:
-        print ("Please input the storage group name array as a parameter!\nQuitting....")
+        print ("Please input the config file and storage group name array as a parameter!\nQuitting....")
         exit(1)
     
-    configComm = configFile(None)
-    configComm.loadConfig()
+    try:
+        configComm = configFile(cf)
+        configComm.loadConfig()
+    except Exception:
+        print "Exit the program for config file read error"
+        exit(1)
+        
     if sgNameSection.lower() == 'all':
         sgNameList = None
     else:

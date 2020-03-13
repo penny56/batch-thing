@@ -21,10 +21,10 @@ def Singleton(cls):
 
 @Singleton
 class dpm:
-    def __init__(self):
+    def __init__(self, cf):
         
         # get hmc information from config file
-        configComm = configFile(None)
+        configComm = configFile(cf)
         configComm.loadConfig()
         conSection = configComm.sectionDict['connection']
         

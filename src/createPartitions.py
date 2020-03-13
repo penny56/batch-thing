@@ -11,7 +11,7 @@ Configuration include two sections in config.cfg file
       this option must be indicated in the command line as a parameter 
    
 e.g.
-python createPartitions.py ubuntu
+python createPartitions.py t90.cfg ubuntu
 
 @author: mayijie
 '''
@@ -25,10 +25,10 @@ from log import log
 class createPartitions:
     def __init__(self, partCommDict, partNameList):
         
-        self.dpmObj = dpm()
+        self.dpmObj = dpm(cf)
         self.partCommDict = partCommDict
         self.partNameList = partNameList
-        self.logger = log.getlogger(self.__class__.__name__)
+        self.logger = log.getlogger(configComm.sectionDict['connection']['cpc'] + '-' + self.__class__.__name__)
 
 
     def run(self):
@@ -64,14 +64,20 @@ class createPartitions:
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 2:
-        partNameSection = sys.argv[1]
+    if len(sys.argv) == 3:
+        cf = sys.argv[1]
+        partNameSection = sys.argv[2]
     else:
-        print ("Please input the partition name array as a parameter!\nQuitting....")
+        print ("Please input the config file and partition name array as a parameter!\nQuitting....")
         exit(1)
     
-    configComm = configFile(None)
-    configComm.loadConfig()
+    try:
+        configComm = configFile(cf)
+        configComm.loadConfig()
+    except Exception:
+        print "Exit the program for config file read error"
+        exit(1)
+
     partCommDict = eval(configComm.sectionDict['partition']['commondict'])
     partNameList = eval(configComm.sectionDict['partition'][partNameSection])
     

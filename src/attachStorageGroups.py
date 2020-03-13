@@ -10,7 +10,7 @@ Configuration include two sections in config.cfg file
       this option must be indicated in the command line as a parameter
    
 e.g.
-python attachStorageGroups.py suse
+python attachStorageGroups.py t90.cfg suse
 
 @author: mayijie
 '''
@@ -24,9 +24,9 @@ from log import log
 class attachStorageGroups:
     def __init__(self, attachCommDict):
         
-        self.dpmObj = dpm()
+        self.dpmObj = dpm(cf)
         self.attachCommDict = attachCommDict
-        self.logger = log.getlogger(self.__class__.__name__)
+        self.logger = log.getlogger(configComm.sectionDict['connection']['cpc'] + '-' + self.__class__.__name__)
 
     def run(self):
 
@@ -48,13 +48,13 @@ class attachStorageGroups:
                     self.logger.info("Partition " + partName + " attach storage group " + sgName + " successful")
                 except Exception as e:
                     self.logger.info("Partition " + partName + " attach storage group " + sgName + " exception failed !!!")
-                    
+                    continue
                 
                 # update the device numbers
 
                 # devnumArray[:] is a slice of devnumArray but with a new object
                 # we use this to avoid the pop operation impact the original
-                self.updateDeviceNumbers(sgObj, devnumArray[:])
+                self.updateDeviceNumbers(str(partObj.uri), sgObj, devnumArray[:])
             
             time.sleep(1)
 
@@ -90,15 +90,21 @@ class attachStorageGroups:
         
         return result
         
-    def updateDeviceNumbers(self, sgObj, devnumArray):
+    def updateDeviceNumbers(self, partUri, sgObj, devnumArray):
 
         try:
             vsrs = sgObj.virtual_storage_resources.list()
         except zhmcclient.HTTPError:
             return None
         
-        if len(devnumArray) == len(vsrs):
-            for vsr in vsrs:
+        # eliminate the vsrs not belong to this partition
+        vsrsii = []
+        for vsr in vsrs:
+            if str(vsr.get_property('partition-uri')) == partUri:
+                vsrsii.append(vsr)
+        
+        if len(devnumArray) == len(vsrsii):
+            for vsr in vsrsii:
                 newValue = dict()
                 adapterDesc = self.getAdapterDesc(vsr.get_property('adapter-port-uri'))
 
@@ -115,7 +121,7 @@ class attachStorageGroups:
                 except zhmcclient.HTTPError as e:
                     return None
         else:
-            print "Number of devnum array not equals to number of vsrs."
+            print "Number of devnum array element: %d not equals to number of vsrs in this partition: %d." %(len(devnumArray), len(vsrsii))
             return None
 
     def getAdapterDesc(self, adapterPortUri):
@@ -127,14 +133,20 @@ class attachStorageGroups:
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 2:
-        partNameSection = sys.argv[1]
+    if len(sys.argv) == 3:
+        cf = sys.argv[1]
+        partNameSection = sys.argv[2]
     else:
-        print ("Please input the partition attachment dictionary as a parameter!\nQuitting....")
+        print ("Please input the config file and partition name array as a parameter!\nQuitting....")
+        exit(1)
+    
+    try:
+        configComm = configFile(cf)
+        configComm.loadConfig()
+    except Exception:
+        print "Exit the program for config file read error"
         exit(1)
 
-    configComm = configFile(None)
-    configComm.loadConfig()
     attachCommDict = eval(configComm.sectionDict['attachment'][partNameSection])
     
     attachObj = attachStorageGroups(attachCommDict)

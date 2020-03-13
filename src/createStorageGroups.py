@@ -13,7 +13,7 @@ Configuration include two sections in config.cfg file
       this option must be indicated in the command line as a parameter 
    
 e.g.
-python createStorageGroups.py ubuntu_data
+python createStorageGroups.py t90.cfg ubuntu_data
 
 @author: mayijie
 '''
@@ -27,11 +27,11 @@ from log import log
 class createStorageGroups:
     def __init__(self, sgCommDict, svCommDict, sgNameList):
         
-        self.dpmObj = dpm()
+        self.dpmObj = dpm(cf)
         self.sgCommDict = sgCommDict
         self.svCommDict = svCommDict
         self.sgNameList = sgNameList
-        self.logger = log.getlogger(self.__class__.__name__)
+        self.logger = log.getlogger(configComm.sectionDict['connection']['cpc'] + '-' + self.__class__.__name__)
 
 
     def run(self):
@@ -90,14 +90,20 @@ class createStorageGroups:
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 2:
-        sgNameSection = sys.argv[1]
+    if len(sys.argv) == 3:
+        cf = sys.argv[1]
+        sgNameSection = sys.argv[2]
     else:
-        print ("Please input the storage group name array as a parameter!\nQuitting....")
+        print ("Please input the config file and partition name array as a parameter!\nQuitting....")
         exit(1)
     
-    configComm = configFile(None)
-    configComm.loadConfig()
+    try:
+        configComm = configFile(cf)
+        configComm.loadConfig()
+    except Exception:
+        print "Exit the program for config file read error"
+        exit(1)
+
     sgCommDict = eval(configComm.sectionDict['storage']['commondict'])
     svCommDict = eval(configComm.sectionDict['storage']['svdict'])
     sgNameList = eval(configComm.sectionDict['storage'][sgNameSection])

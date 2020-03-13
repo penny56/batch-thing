@@ -24,10 +24,10 @@ from log import log
 class createvNics:
     def __init__(self, vnicCommDict, partNameList):
         
-        self.dpmObj = dpm()
+        self.dpmObj = dpm(cf)
         self.vnicCommDict = vnicCommDict
         self.partNameList = partNameList
-        self.logger = log.getlogger(self.__class__.__name__)
+        self.logger = log.getlogger(configComm.sectionDict['connection']['cpc'] + '-' + self.__class__.__name__)
 
 
     def run(self):
@@ -71,15 +71,20 @@ class createvNics:
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 2:
-        partNameSection = sys.argv[1]
-        
+    if len(sys.argv) == 3:
+        cf = sys.argv[1]
+        partNameSection = sys.argv[2]
     else:
-        print ("Please input the vNic creation model as a parameter!\nQuitting....")
+        print ("Please input the config file and vNic creation model as a parameter!\nQuitting....")
         exit(1)
     
-    configComm = configFile(None)
-    configComm.loadConfig()
+    try:
+        configComm = configFile(cf)
+        configComm.loadConfig()
+    except Exception:
+        print "Exit the program for config file read error"
+        exit(1)
+
     vnicCommDict = eval(configComm.sectionDict['network']['commondict'])
     partNameList = eval(configComm.sectionDict['partition'][partNameSection])
 

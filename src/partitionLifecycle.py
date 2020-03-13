@@ -8,7 +8,7 @@ Configuration include two sections in config.cfg file
       this option must be indicated in the command line as a parameter 
    
 e.g.
-python createPartitions.py ubuntu
+python partitionLifecycle.py t90.cfg ubuntu
 
 @author: mayijie
 '''
@@ -30,14 +30,14 @@ from startPartitions import startPartitions
 class partitionLifecycle:
     def __init__(self, partCommDict, partNameList, vnicCommDict, attachCommDict, bootCommDict):
         
-        self.dpmObj = dpm()
+        self.dpmObj = dpm(cf)
         self.partCommDict = partCommDict
         self.partNameList = partNameList
         self.vnicCommDict = vnicCommDict
         self.attachCommDict = attachCommDict
         self.bootCommDict = bootCommDict
         self.counter = 2
-        self.logger = log.getlogger(self.__class__.__name__)
+        self.logger = log.getlogger(configComm.sectionDict['connection']['cpc'] + '-' + self.__class__.__name__)
 
     def run(self):
 
@@ -72,14 +72,20 @@ class partitionLifecycle:
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 2:
-        partDict = sys.argv[1]
+    if len(sys.argv) == 3:
+        cf = sys.argv[1]
+        partDict = sys.argv[2]
     else:
-        print ("Please input the partition dictionary as a parameter!\nQuitting....")
+        print ("Please input the config file and partition dictionary as a parameter!\nQuitting....")
         exit(1)
     
-    configComm = configFile(None)
-    configComm.loadConfig()
+    try:
+        configComm = configFile(cf)
+        configComm.loadConfig()
+    except Exception:
+        print "Exit the program for config file read error"
+        exit(1)
+        
     partDict = eval(configComm.sectionDict['lifecycle'][partDict])
 
     partCommDict = eval(configComm.sectionDict['partition']['commondict'])

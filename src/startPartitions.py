@@ -8,7 +8,7 @@ Configuration include two sections in config.cfg file
       this option must be indicated in the command line as a parameter 
    
 e.g.
-python startPartitions.py ubuntu
+python startPartitions.py t90.cfg ubuntu
 
 @author: mayijie
 '''
@@ -22,9 +22,9 @@ from log import log
 class startPartitions:
     def __init__(self, partNameList):
         
-        self.dpmObj = dpm()
+        self.dpmObj = dpm(cf)
         self.partNameList = partNameList
-        self.logger = log.getlogger(self.__class__.__name__)
+        self.logger = log.getlogger(configComm.sectionDict['connection']['cpc'] + '-' + self.__class__.__name__)
         # identify the wait time until the start/stop action completed, 600 = 10mins
         self.timeout = 600
         # To out put to lifecycle module
@@ -55,14 +55,20 @@ class startPartitions:
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 2:
-        partNameSection = sys.argv[1]
+    if len(sys.argv) == 3:
+        cf = sys.argv[1]
+        partNameSection = sys.argv[2]
     else:
-        print ("Please input the partition name array as a parameter!\nQuitting....")
+        print ("Please input the config file and partition name array as a parameter!\nQuitting....")
         exit(1)
     
-    configComm = configFile(None)
-    configComm.loadConfig()
+    try:
+        configComm = configFile(cf)
+        configComm.loadConfig()
+    except Exception:
+        print "Exit the program for config file read error"
+        exit(1)
+
     partNameList = eval(configComm.sectionDict['partition'][partNameSection])
     
     startObj = startPartitions(partNameList)

@@ -6,23 +6,25 @@ Created on Nov 24, 2019
 
 from datetime import *
 from datetime import date
+from configFile import configFile
 from log import log
+import sys
 import smtplib
 from email.mime.text import MIMEText
 
 class statistic:
     
     def __init__(self):
-        self.cf = None
-        self.logger = log.getlogger(self.__class__.__name__)
+        self.cf = cf
+        self.logger = log.getlogger(configComm.sectionDict['connection']['cpc'] + '-' + self.__class__.__name__)
         # email
         #self.mailHost = '9.12.23.17'
         # use the IBM official smtp server
         self.mailHost = 'na.relay.ibm.com'
-        self.mailSubject = '[T90 statistic] - [' + str(date.today()) + ']'
+        self.mailSubject = '[' + configComm.sectionDict['connection']['cpc'] + ' statistic] - [' + str(date.today()) + ']'
         self.mailFrom = 'DPM_Auto'
-        self.mailTo = ['mayijie@cn.ibm.com', 'liwbj@cn.ibm.com', 'lbcruz@us.ibm.com', 'jrossi@us.ibm.com', 'w8a3m8t5g8q5q3g0@ibm-systems-z.slack.com']
-        #self.mailTo = ['mayijie@cn.ibm.com']
+        #self.mailTo = ['mayijie@cn.ibm.com', 'liwbj@cn.ibm.com', 'lbcruz@us.ibm.com', 'jrossi@us.ibm.com', 'w8a3m8t5g8q5q3g0@ibm-systems-z.slack.com']
+        self.mailTo = ['mayijie@cn.ibm.com']
         self.content = ''
 
     def changePartitionStatus(self, cf):
@@ -155,18 +157,32 @@ class statistic:
         
 if __name__ == '__main__':
 
+    if len(sys.argv) == 2:
+        cf = sys.argv[1]
+    else:
+        print ("Please input the config file as a parameter!\nQuitting....")
+        exit(1)
+
+    try:
+        configComm = configFile(cf)
+        configComm.loadConfig()
+    except Exception:
+        print "Exit the program for config file read error"
+        exit(1)    
+    
     statObj = statistic()
+    
+    # mail the stopped partition names
+    statObj.checkPartitionStatus(configComm.sectionDict['connection']['cpc'] + '-' + 'checkPartitionStatus.log')
+    
+    # mail the storage groups not in complete state
+    statObj.checkStorageGroupsStatus(configComm.sectionDict['connection']['cpc'] + '-' + 'checkStorageGroupsStatus.log')
+    
     # mail the partitions start/stop average time span
     statObj.changePartitionStatus('changePartitionStatus.log')
     
     # mail the new created partitions start/stop average time span
     statObj.partitionLifecycle('partitionLifecycle.log')
-    
-    # mail the stopped partition names
-    statObj.checkPartitionStatus('checkPartitionStatus.log')
-    
-    # mail the storage groups not in complete state
-    statObj.checkStorageGroupsStatus('checkStorageGroupsStatus.log')
     
     statObj.sendMail()
     
