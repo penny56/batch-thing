@@ -233,14 +233,14 @@ if __name__ == '__main__':
     # mail the storage groups not in complete state
     statObj.checkStorageGroupsStatus(configComm.sectionDict['connection']['cpc'] + '-' + 'checkStorageGroupsStatus.log')
     
+    # mail the adapters not in Active status
+    statObj.checkAdaptersStatus(configComm.sectionDict['connection']['cpc'] + '-' + 'checkAdaptersStatus.log')
+    
     # mail the partitions start/stop average time span
     statObj.changePartitionStatus(configComm.sectionDict['connection']['cpc'] + '-' + 'changePartitionStatus.log')
     
     # mail the new created partitions start/stop average time span
     statObj.partitionLifecycle(configComm.sectionDict['connection']['cpc'] + '-' + 'partitionLifecycle.log')
-    
-    # mail the adapters not in Active status
-    statObj.checkAdaptersStatus(configComm.sectionDict['connection']['cpc'] + '-' + 'checkAdaptersStatus.log')
     
     statObj.sendMail()
     
