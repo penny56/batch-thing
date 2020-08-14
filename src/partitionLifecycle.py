@@ -42,13 +42,13 @@ class partitionLifecycle:
     def run(self):
 
         print "partitionLifecycle starting >>>"
-        stopObj = stopPartitions(self.partNameList)
-        delObj = deletePartitions(self.partNameList)
-        createObj = createPartitions(self.partCommDict, self.partNameList)
-        vNicObj = createvNics(self.vnicCommDict, self.partNameList)
-        attachObj = attachStorageGroups(self.attachCommDict)
-        bootObj = setBootOptions(self.bootCommDict)
-        startObj = startPartitions(self.partNameList)
+        stopObj = stopPartitions(self.dpmObj, self.partNameList)
+        delObj = deletePartitions(self.dpmObj, self.partNameList)
+        createObj = createPartitions(self.dpmObj, self.partCommDict, self.partNameList)
+        vNicObj = createvNics(self.dpmObj, self.vnicCommDict, self.partNameList)
+        attachObj = attachStorageGroups(self.dpmObj, self.attachCommDict)
+        bootObj = setBootOptions(self.dpmObj, self.bootCommDict)
+        startObj = startPartitions(self.dpmObj, self.partNameList)
 
         for i in range(self.counter):
             stopObj.run()

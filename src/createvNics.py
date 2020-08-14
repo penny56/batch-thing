@@ -22,12 +22,16 @@ from dpm import dpm
 from log import log
 
 class createvNics:
-    def __init__(self, vnicCommDict, partNameList):
+    def __init__(self, lcdpm, vnicCommDict, partNameList):
         
-        self.dpmObj = dpm(cf)
+        if lcdpm == None:
+            self.dpmObj = dpm(cf)
+        else:
+            # for launch from partition life cycle object
+            self.dpmObj = lcdpm
         self.vnicCommDict = vnicCommDict
         self.partNameList = partNameList
-        self.logger = log.getlogger(configComm.sectionDict['connection']['cpc'] + '-' + self.__class__.__name__)
+        self.logger = log.getlogger(self.dpmObj.cpc_name + '-' + self.__class__.__name__)
 
 
     def run(self):
@@ -88,5 +92,5 @@ if __name__ == '__main__':
     vnicCommDict = eval(configComm.sectionDict['network']['commondict'])
     partNameList = eval(configComm.sectionDict['partition'][partNameSection])
 
-    vNicObj = createvNics(vnicCommDict, partNameList)
+    vNicObj = createvNics(None, vnicCommDict, partNameList)
     vNicObj.run()

@@ -20,11 +20,15 @@ from dpm import dpm
 from log import log
 
 class stopPartitions:
-    def __init__(self, partNameList):
+    def __init__(self, lcdpm, partNameList):
         
-        self.dpmObj = dpm(cf)
+        if lcdpm == None:
+            self.dpmObj = dpm(cf)
+        else:
+            # for launch from partition life cycle object
+            self.dpmObj = lcdpm
         self.partNameList = partNameList
-        self.logger = log.getlogger(configComm.sectionDict['connection']['cpc'] + '-' + self.__class__.__name__)
+        self.logger = log.getlogger(self.dpmObj.cpc_name + '-' + self.__class__.__name__)
         # identify the wait time until the start/stop action completed, 600 = 10mins
         self.timeout = 600
         # To out put to lifecycle module
@@ -72,5 +76,5 @@ if __name__ == '__main__':
         
     partNameList = eval(configComm.sectionDict['partition'][partNameSection])
     
-    stopObj = stopPartitions(partNameList)
+    stopObj = stopPartitions(None, partNameList)
     stopObj.run()

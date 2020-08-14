@@ -23,12 +23,16 @@ from dpm import dpm
 from log import log
 
 class createPartitions:
-    def __init__(self, partCommDict, partNameList):
+    def __init__(self, lcdpm, partCommDict, partNameList):
         
-        self.dpmObj = dpm(cf)
+        if lcdpm == None:
+            self.dpmObj = dpm(cf)
+        else:
+            # for launch from partition life cycle object
+            self.dpmObj = lcdpm
         self.partCommDict = partCommDict
         self.partNameList = partNameList
-        self.logger = log.getlogger(configComm.sectionDict['connection']['cpc'] + '-' + self.__class__.__name__)
+        self.logger = log.getlogger(self.dpmObj.cpc_name + '-' + self.__class__.__name__)
 
 
     def run(self):
@@ -81,5 +85,5 @@ if __name__ == '__main__':
     partCommDict = eval(configComm.sectionDict['partition']['commondict'])
     partNameList = eval(configComm.sectionDict['partition'][partNameSection])
     
-    partObj = createPartitions(partCommDict, partNameList)
+    partObj = createPartitions(None, partCommDict, partNameList)
     partObj.run()

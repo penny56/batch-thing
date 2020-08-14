@@ -29,11 +29,15 @@ from dpm import dpm
 from log import log
 
 class setBootOptions:
-    def __init__(self, bootCommDict):
+    def __init__(self, lcdpm, bootCommDict):
         
-        self.dpmObj = dpm(cf)
+        if lcdpm == None:
+            self.dpmObj = dpm(cf)
+        else:
+            # for launch from partition life cycle object
+            self.dpmObj = lcdpm
         self.bootCommDict = bootCommDict
-        self.logger = log.getlogger(configComm.sectionDict['connection']['cpc'] + '-' + self.__class__.__name__)
+        self.logger = log.getlogger(self.dpmObj.cpc_name + '-' + self.__class__.__name__)
 
 
     def run(self):
@@ -78,5 +82,5 @@ if __name__ == '__main__':
 
     bootCommDict = eval(configComm.sectionDict['bootoption'][bootOptionDict])
 
-    bootObj = setBootOptions(bootCommDict)
+    bootObj = setBootOptions(None, bootCommDict)
     bootObj.run()

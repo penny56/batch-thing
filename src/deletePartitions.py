@@ -20,11 +20,15 @@ from dpm import dpm
 from log import log
 
 class deletePartitions:
-    def __init__(self, partNameList):
-        
-        self.dpmObj = dpm(cf)
+    def __init__(self, lcdpm, partNameList):
+
+        if lcdpm == None:
+            self.dpmObj = dpm(cf)
+        else:
+            # for launch from partition life cycle object
+            self.dpmObj = lcdpm
         self.partNameList = partNameList
-        self.logger = log.getlogger(configComm.sectionDict['connection']['cpc'] + '-' + self.__class__.__name__)
+        self.logger = log.getlogger(self.dpmObj.cpc_name + '-' + self.__class__.__name__)
 
 
     def run(self):
@@ -64,5 +68,5 @@ if __name__ == '__main__':
 
     partNameList = eval(configComm.sectionDict['partition'][partNameSection])
     
-    deleteObj = deletePartitions(partNameList)
+    deleteObj = deletePartitions(None, partNameList)
     deleteObj.run()
