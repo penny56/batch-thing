@@ -36,7 +36,7 @@ class partitionLifecycle:
         self.vnicCommDict = vnicCommDict
         self.attachCommDict = attachCommDict
         self.bootCommDict = bootCommDict
-        self.counter = 2
+        self.counter = 1
         self.logger = log.getlogger(configComm.sectionDict['connection']['cpc'] + '-' + self.__class__.__name__)
 
     def run(self):
