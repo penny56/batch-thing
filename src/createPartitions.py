@@ -53,6 +53,8 @@ class createPartitions:
             partitionTempl["maximum-memory"] = int(self.partCommDict["max_mem"]) * 1024
         else:
             partitionTempl["maximum-memory"] = int(self.partCommDict["max_mem"])
+            
+        partitionTempl['boot-timeout'] = 600
         
         for partName in self.partNameList:
             partitionTempl["name"] = partName
