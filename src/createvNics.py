@@ -15,7 +15,7 @@ python createvNics.py rhel
 @author: mayijie
 '''
 
-import sys, time
+import sys, time, os
 import zhmcclient
 from configFile import configFile
 from dpm import dpm
@@ -41,7 +41,8 @@ class createvNics:
         try:
             adapter = self.dpmObj.cpc.adapters.find(name = self.vnicCommDict["adaptername"])
         except zhmcclient.NotFound as e:
-            pass
+            self.logger.info("vNic create failed for adapter: " + self.vnicCommDict["adaptername"] + " could not found !!!")
+            return
         
         # Get the vSwitch
         vswitches = self.dpmObj.cpc.virtual_switches.findall(**{'backing-adapter-uri': adapter.uri})
@@ -59,8 +60,11 @@ class createvNics:
         
         for partName in self.partNameList:
             # get the partition
-            partObj = self.dpmObj.cpc.partitions.find(name = partName)
-            
+            try:
+                partObj = self.dpmObj.cpc.partitions.find(name = partName)
+            except Exception as e:
+                self.logger.info(partName + " delete failed -- could not find !!!")
+                continue
             vnicTempl["name"] = partName + '_' + self.vnicCommDict["namesuffix"]
             
             # Create the vNic
@@ -69,6 +73,18 @@ class createvNics:
                 self.logger.info("vNic " + vnicTempl["name"] + " in partition " + partName + " created successful")
             except zhmcclient.HTTPError as e:
                 self.logger.info("vNic " + vnicTempl["name"] + " in partition " + partName + " created failed !!!")
+                
+                # Record the failed log information
+                loggerFailed = log.getlogger(time.strftime('%Y-%m-%d_%H-%M-%S_', time.localtime()) + self.dpmObj.cpc_name + '-' + self.__class__.__name__)
+                loggerFailed.info("<< vNic " + vnicTempl["name"] + " in partition " + partName + " created failed >>")
+                loggerFailed.info("===>")
+                loggerFailed.info("http_status: " + str(e.http_status))
+                loggerFailed.info("reason: " + str(e.reason))
+                loggerFailed.info("message: " + str(e.message))
+                os.system("echo 0 > ./enable")
+                loggerFailed.info("== The longevity script is stopped until you delete the enable file or echo it to 1 ==")
+
+                exit(1)
             time.sleep(1)
 
         print "createvNics completed ..."

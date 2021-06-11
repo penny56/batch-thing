@@ -16,7 +16,7 @@ python createPartitions.py t90.cfg ubuntu
 @author: mayijie
 '''
 
-import sys, time
+import sys, time, os
 import zhmcclient
 from configFile import configFile
 from dpm import dpm
@@ -64,6 +64,18 @@ class createPartitions:
                 self.logger.info(partName + " created successful")
             except (zhmcclient.HTTPError, zhmcclient.ParseError) as e:
                 self.logger.info(partName + " created failed !!!")
+                
+                # Record the failed log information
+                loggerFailed = log.getlogger(time.strftime('%Y-%m-%d_%H-%M-%S_', time.localtime()) + self.dpmObj.cpc_name + '-' + self.__class__.__name__)
+                loggerFailed.info("<< " + partName + " partition create failed by the following reason, reference WSAPI doc for code details explanation >>")
+                loggerFailed.info("===>")
+                loggerFailed.info("http_status: " + str(e.http_status))
+                loggerFailed.info("reason: " + str(e.reason))
+                loggerFailed.info("message: " + str(e.message))
+                os.system("echo 0 > ./enable")
+                loggerFailed.info("== The longevity script is stopped until you delete the enable file or echo it to 1 ==")
+
+                exit(1)
             time.sleep(1)
             
         print "createPartitions completed ..."

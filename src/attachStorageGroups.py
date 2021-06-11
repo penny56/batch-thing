@@ -15,7 +15,7 @@ python attachStorageGroups.py t90.cfg suse
 @author: mayijie
 '''
 
-import sys, time
+import sys, time, os
 import zhmcclient
 from configFile import configFile
 from dpm import dpm
@@ -36,7 +36,11 @@ class attachStorageGroups:
 
         print "attachStorageGroups starting >>>"
         for partName,  sgDict in self.attachCommDict.items():
-            partObj = self.dpmObj.cpc.partitions.find(name = partName)
+            try:
+                partObj = self.dpmObj.cpc.partitions.find(name = partName)
+            except Exception as e:
+                self.logger.info(partName + " attach storage groups failed -- could not find !!!")
+                continue
             
             for sgName, devnumArray in sgDict.items():
                 ret = self.getStorageGroupEntity (sgName)
@@ -52,7 +56,18 @@ class attachStorageGroups:
                     self.logger.info("Partition " + partName + " attach storage group " + sgName + " successful")
                 except Exception as e:
                     self.logger.info("Partition " + partName + " attach storage group " + sgName + " exception failed !!!")
-                    continue
+                    
+                    # Record the failed log information
+                    loggerFailed = log.getlogger(time.strftime('%Y-%m-%d_%H-%M-%S_', time.localtime()) + self.dpmObj.cpc_name + '-' + self.__class__.__name__)
+                    loggerFailed.info("<< Partition " + partName + " attach storage group " + sgName + " exception failed >>")
+                    loggerFailed.info("===>")
+                    loggerFailed.info("http_status: " + str(e.http_status))
+                    loggerFailed.info("reason: " + str(e.reason))
+                    loggerFailed.info("message: " + str(e.message))
+                    loggerFailed.info("== The longevity script is stopped until you delete the enable file or echo it to 1 ==")
+                    os.system("echo 0 > ./enable")
+    
+                    exit(1)
                 
                 # update the device numbers
 
@@ -123,7 +138,20 @@ class attachStorageGroups:
                 try:
                     vsr.update_properties(newValue)
                 except zhmcclient.HTTPError as e:
-                    return None
+                    self.logger.info("exception failed when setting device numbers " + str(newValue) + " !!!")
+                    
+                    # Record the failed log information
+                    loggerFailed = log.getlogger(time.strftime('%Y-%m-%d_%H-%M-%S_', time.localtime()) + self.dpmObj.cpc_name + '-' + self.__class__.__name__)
+                    loggerFailed.info("<< Exception failed when setting device numbers " + str(newValue) + " >>")
+                    loggerFailed.info("===>")
+                    loggerFailed.info("http_status: " + str(e.http_status))
+                    loggerFailed.info("reason: " + str(e.reason))
+                    loggerFailed.info("message: " + str(e.message))
+                    loggerFailed.info("== The longevity script is stopped until you delete the enable file or echo it to 1 ==")
+                    os.system("echo 0 > ./enable")
+    
+                    exit(1)
+                    
         else:
             print "Number of devnum array element: %d not equals to number of vsrs in this partition: %d." %(len(devnumArray), len(vsrsii))
             return None

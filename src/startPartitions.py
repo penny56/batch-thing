@@ -13,7 +13,7 @@ python startPartitions.py t90.cfg ubuntu
 @author: mayijie
 '''
 
-import sys, time
+import sys, time, os
 import zhmcclient
 from configFile import configFile
 from dpm import dpm
@@ -50,7 +50,18 @@ class startPartitions:
                     partObj.start(wait_for_completion = True, operation_timeout = self.timeout, status_timeout = self.timeout)
                 except (zhmcclient.HTTPError, Exception) as e:
                     self.logger.info(partName + " start failed !!!")
-                    continue
+                    
+                    # Record the failed log information
+                    loggerFailed = log.getlogger(time.strftime('%Y-%m-%d_%H-%M-%S_', time.localtime()) + self.dpmObj.cpc_name + '-' + self.__class__.__name__)
+                    loggerFailed.info("<< " + partName + " partition start failed by the following reason, reference WSAPI doc for code details explanation >>")
+                    loggerFailed.info("===>")
+                    loggerFailed.info("http_status: " + str(e.http_status))
+                    loggerFailed.info("reason: " + str(e.reason))
+                    loggerFailed.info("message: " + str(e.message))
+                    loggerFailed.info("== The longevity script is stopped until you delete the enable file or echo it to 1 ==")
+                    os.system("echo 0 > ./enable")
+    
+                    exit(1)
                 end = int(time.time())
                 self.logger.info(partName + " start successful " + str(end - start))
                 self.timespan[partName] = str(end - start)
