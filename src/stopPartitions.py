@@ -51,7 +51,7 @@ class stopPartitions:
                     partObj.stop(wait_for_completion = True, operation_timeout = self.timeout)
                 except (zhmcclient.HTTPError, Exception) as e:
                     self.logger.info(partName + " stop failed !!!")
-                    os.system("echo 0 > ./enable")
+                    
                     # Record the failed log information
                     loggerFailed = log.getlogger(time.strftime('%Y-%m-%d_%H-%M-%S_', time.localtime()) + self.dpmObj.cpc_name + '-' + self.__class__.__name__)
                     loggerFailed.info("<< " + partName + " partition stop failed by the following reason, reference WSAPI doc for code details explanation >>")
@@ -60,6 +60,7 @@ class stopPartitions:
                     loggerFailed.info("reason: " + str(e.reason))
                     loggerFailed.info("message: " + str(e.message))
                     loggerFailed.info("== The longevity script is stopped until you delete the enable file or echo it to 1 ==")
+                    os.system("echo 0 > ./enable")
     
                     exit(1)
                 end = int(time.time())
