@@ -56,7 +56,7 @@ class attachStorageGroups:
                     self.logger.info("Partition " + partName + " attach storage group " + sgName + " successful")
                 except Exception as e:
                     self.logger.info("Partition " + partName + " attach storage group " + sgName + " exception failed !!!")
-                    
+                    os.system("echo 0 > ./enable")
                     # Record the failed log information
                     loggerFailed = log.getlogger(time.strftime('%Y-%m-%d_%H-%M-%S_', time.localtime()) + self.dpmObj.cpc_name + '-' + self.__class__.__name__)
                     loggerFailed.info("<< Partition " + partName + " attach storage group " + sgName + " exception failed >>")
@@ -65,7 +65,6 @@ class attachStorageGroups:
                     loggerFailed.info("reason: " + str(e.reason))
                     loggerFailed.info("message: " + str(e.message))
                     loggerFailed.info("== The longevity script is stopped until you delete the enable file or echo it to 1 ==")
-                    os.system("echo 0 > ./enable")
     
                     exit(1)
                 
@@ -139,7 +138,7 @@ class attachStorageGroups:
                     vsr.update_properties(newValue)
                 except zhmcclient.HTTPError as e:
                     self.logger.info("exception failed when setting device numbers " + str(newValue) + " !!!")
-                    
+                    os.system("echo 0 > ./enable")
                     # Record the failed log information
                     loggerFailed = log.getlogger(time.strftime('%Y-%m-%d_%H-%M-%S_', time.localtime()) + self.dpmObj.cpc_name + '-' + self.__class__.__name__)
                     loggerFailed.info("<< Exception failed when setting device numbers " + str(newValue) + " >>")
@@ -148,7 +147,6 @@ class attachStorageGroups:
                     loggerFailed.info("reason: " + str(e.reason))
                     loggerFailed.info("message: " + str(e.message))
                     loggerFailed.info("== The longevity script is stopped until you delete the enable file or echo it to 1 ==")
-                    os.system("echo 0 > ./enable")
     
                     exit(1)
                     
