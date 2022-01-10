@@ -76,12 +76,12 @@ class partitionLifecycle:
 
 if __name__ == '__main__':
     
-    # check if enable file is enabled
-    if os.path.isfile("enable"):
-        with open('enable', 'r') as f:
+    # check if disabled file is enabled
+    if os.path.isfile("disabled"):
+        with open('disabled', 'r') as f:
             # get the 1st character in the 1st line
-            if f.readlines()[0][0] == '0':
-                print ("Exist with the enable flag un-checked!")
+            if f.readlines()[0][0] == '1':
+                print ("Exist with the disabled flag checked!")
                 exit(0)
 
     if len(sys.argv) == 3:
