@@ -7,7 +7,7 @@ py2: ConfigParser & py3: configparser
 '''
 
 import sys, os
-import ConfigParser
+import configparser
 
 class configFile:
     
@@ -29,7 +29,7 @@ class configFile:
                 raise exc
             if '/' not in self.config:
                 self.config = os.path.join(sys.path[0], self.config)
-            config = ConfigParser.RawConfigParser()
+            config = configparser.RawConfigParser()
             config.readfp(open(self.config))
             
             sections = config.sections()

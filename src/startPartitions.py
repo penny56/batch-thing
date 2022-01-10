@@ -37,7 +37,7 @@ class startPartitions:
 
     def run(self):
 
-        print "startPartitions starting >>>"
+        print ("startPartitions starting >>>")
         for partName in self.partNameList:
             try:
                 partObj = self.dpmObj.cpc.partitions.find(name = partName)
@@ -65,7 +65,7 @@ class startPartitions:
                 self.logger.info(partName + " start successful " + str(end - start))
                 self.timespan[partName] = str(end - start)
 
-        print "startPartitions completed ..."
+        print ("startPartitions completed ...")
 
 
 if __name__ == '__main__':
@@ -80,7 +80,7 @@ if __name__ == '__main__':
         configComm = configFile(cf)
         configComm.loadConfig()
     except Exception:
-        print "Exit the program for config file read error"
+        print ("Exit the program for config file read error")
         exit(1)
 
     partNameList = eval(configComm.sectionDict['partition'][partNameSection])

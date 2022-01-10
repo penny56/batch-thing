@@ -34,7 +34,7 @@ class attachStorageGroups:
 
     def run(self):
 
-        print "attachStorageGroups starting >>>"
+        print ("attachStorageGroups starting >>>")
         for partName,  sgDict in self.attachCommDict.items():
             try:
                 partObj = self.dpmObj.cpc.partitions.find(name = partName)
@@ -76,7 +76,7 @@ class attachStorageGroups:
             
             time.sleep(1)
 
-        print "attachStorageGroups completed ..."
+        print ("attachStorageGroups completed ...")
 
     '''
     Verify and return the Storage Group entity by storage group name
@@ -151,7 +151,7 @@ class attachStorageGroups:
                     exit(1)
                     
         else:
-            print "Number of devnum array element: %d not equals to number of vsrs in this partition: %d." %(len(devnumArray), len(vsrsii))
+            print ("Number of devnum array element: %d not equals to number of vsrs in this partition: %d." %(len(devnumArray), len(vsrsii)))
             return None
 
     def getAdapterDesc(self, adapterPortUri):
@@ -174,7 +174,7 @@ if __name__ == '__main__':
         configComm = configFile(cf)
         configComm.loadConfig()
     except Exception:
-        print "Exit the program for config file read error"
+        print ("Exit the program for config file read error")
         exit(1)
 
     attachCommDict = eval(configComm.sectionDict['attachment'][partNameSection])

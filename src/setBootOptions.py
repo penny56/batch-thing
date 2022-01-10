@@ -42,7 +42,7 @@ class setBootOptions:
 
     def run(self):
         
-        print "setBootOptions starting >>>"
+        print ("setBootOptions starting >>>")
         for partName, sg_sv in self.bootCommDict.items():
             partObj = self.dpmObj.cpc.partitions.find(name = partName)
             sgName = sg_sv.split(' ')[0]
@@ -62,7 +62,7 @@ class setBootOptions:
             
             time.sleep(1)
 
-        print "setBootOptions completed ..."
+        print ("setBootOptions completed ...")
 
 
 if __name__ == '__main__':
@@ -77,7 +77,7 @@ if __name__ == '__main__':
         configComm = configFile(cf)
         configComm.loadConfig()
     except Exception:
-        print "Exit the program for config file read error"
+        print ("Exit the program for config file read error")
         exit(1)
 
     bootCommDict = eval(configComm.sectionDict['bootoption'][bootOptionDict])

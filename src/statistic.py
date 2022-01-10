@@ -208,7 +208,7 @@ class statistic:
             smtpObj.sendmail(self.mailFrom, self.mailTo, msg.as_string())
             smtpObj.quit()
         except Exception as e:
-            print "Error..mail.."
+            print ("Error..mail..")
         
 if __name__ == '__main__':
 
@@ -222,7 +222,7 @@ if __name__ == '__main__':
         configComm = configFile(cf)
         configComm.loadConfig()
     except Exception:
-        print "Exit the program for config file read error"
+        print ("Exit the program for config file read error")
         exit(1)    
     
     statObj = statistic()

@@ -36,7 +36,7 @@ class createStorageGroups:
 
     def run(self):
         
-        print "createStorageGroups starting >>>"
+        print ("createStorageGroups starting >>>")
         # construct storage volumes template
         svsTempl = list()
         for sv in self.svCommDict[self.sgCommDict['sgvolume']]:
@@ -86,7 +86,7 @@ class createStorageGroups:
                 self.logger.info(sgName + " created failed !!!")
             time.sleep(1)
             
-        print "createStorageGroups completed ..."
+        print ("createStorageGroups completed ...")
 
 
 if __name__ == '__main__':
@@ -101,7 +101,7 @@ if __name__ == '__main__':
         configComm = configFile(cf)
         configComm.loadConfig()
     except Exception:
-        print "Exit the program for config file read error"
+        print ("Exit the program for config file read error")
         exit(1)
 
     sgCommDict = eval(configComm.sectionDict['storage']['commondict'])

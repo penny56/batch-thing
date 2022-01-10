@@ -28,7 +28,7 @@ class checkAdaptersStatus:
 
     def run(self):
         
-        print "checkAdaptersStatus starting >>>"
+        print ("checkAdaptersStatus starting >>>")
         
         for cpcAdapter in self.dpmObj.cpc.adapters.list(full_properties=True):
             adapterID = cpcAdapter.get_property('adapter-id')
@@ -41,7 +41,7 @@ class checkAdaptersStatus:
 
 
                 
-        print "checkAdaptersStatus completed ..."
+        print ("checkAdaptersStatus completed ...")
 
 
 if __name__ == '__main__':
@@ -56,7 +56,7 @@ if __name__ == '__main__':
         configComm = configFile(cf)
         configComm.loadConfig()
     except Exception:
-        print "Exit the program for config file read error"
+        print ("Exit the program for config file read error")
         exit(1)
 
     if adapterSection.lower() == 'all':

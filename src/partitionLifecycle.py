@@ -41,7 +41,7 @@ class partitionLifecycle:
 
     def run(self):
 
-        print "partitionLifecycle starting >>>"
+        print ("partitionLifecycle starting >>>")
         stopObj = stopPartitions(self.dpmObj, self.partNameList)
         delObj = deletePartitions(self.dpmObj, self.partNameList)
         createObj = createPartitions(self.dpmObj, self.partCommDict, self.partNameList)
@@ -68,10 +68,10 @@ class partitionLifecycle:
             for partName, timespan in startObj.timespan.items():
                 self.logger.info(partName + " start successful " + timespan)
             '''
-            print "partitionLifecycle sleeping -----------------------------------------------> 30s ..."
+            print ("partitionLifecycle sleeping -----------------------------------------------> 30s ...")
             time.sleep(30)
             
-        print "partitionLifecycle completed ..."
+        print ("partitionLifecycle completed ...")
 
 
 if __name__ == '__main__':
@@ -81,7 +81,7 @@ if __name__ == '__main__':
         with open('enable', 'r') as f:
             # get the 1st character in the 1st line
             if f.readlines()[0][0] == '0':
-                print "Exist with the enable flag un-checked!"
+                print ("Exist with the enable flag un-checked!")
                 exit(0)
 
     if len(sys.argv) == 3:
@@ -95,7 +95,7 @@ if __name__ == '__main__':
         configComm = configFile(cf)
         configComm.loadConfig()
     except Exception:
-        print "Exit the program for configure file: " + cf + " load error!"
+        print ("Exit the program for configure file: " + cf + " load error!")
         exit(1)
         
     partDict = eval(configComm.sectionDict['lifecycle'][partDict])

@@ -33,7 +33,7 @@ class deletePartitions:
 
     def run(self):
 
-        print "deletePartitions starting >>>"
+        print ("deletePartitions starting >>>")
         for partName in self.partNameList:
             try:
                 partObj = self.dpmObj.cpc.partitions.find(name = partName)
@@ -60,7 +60,7 @@ class deletePartitions:
             else:
                 self.logger.info(partName + " delete failed for in " + str(partObj.get_property('status')) + " state !!!")
         
-        print "deletePartitions completed ..."
+        print ("deletePartitions completed ...")
 
 
 if __name__ == '__main__':
@@ -75,7 +75,7 @@ if __name__ == '__main__':
         configComm = configFile(cf)
         configComm.loadConfig()
     except Exception:
-        print "Exit the program for config file read error"
+        print ("Exit the program for config file read error")
         exit(1)
 
     partNameList = eval(configComm.sectionDict['partition'][partNameSection])

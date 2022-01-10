@@ -36,7 +36,7 @@ class createvNics:
 
     def run(self):
 
-        print "createvNics starting >>>"
+        print ("createvNics starting >>>")
         # Check if the adapter exist.
         try:
             adapter = self.dpmObj.cpc.adapters.find(name = self.vnicCommDict["adaptername"])
@@ -86,7 +86,7 @@ class createvNics:
                 exit(1)
             time.sleep(1)
 
-        print "createvNics completed ..."
+        print ("createvNics completed ...")
 
 
 if __name__ == '__main__':
@@ -101,7 +101,7 @@ if __name__ == '__main__':
         configComm = configFile(cf)
         configComm.loadConfig()
     except Exception:
-        print "Exit the program for config file read error"
+        print ("Exit the program for config file read error")
         exit(1)
 
     vnicCommDict = eval(configComm.sectionDict['network']['commondict'])

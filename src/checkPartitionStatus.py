@@ -30,7 +30,7 @@ class checkPartitionStatus:
 
     def run(self):
         
-        print "checkPartitionStatus starting >>>"
+        print ("checkPartitionStatus starting >>>")
         
         for cpcPart in self.dpmObj.cpc.partitions.list():
             partName = cpcPart.get_property('name')
@@ -50,7 +50,7 @@ class checkPartitionStatus:
             time.sleep(1)
         '''
                 
-        print "checkPartitionStatus completed ..."
+        print ("checkPartitionStatus completed ...")
 
 
 if __name__ == '__main__':
@@ -65,7 +65,7 @@ if __name__ == '__main__':
         configComm = configFile(cf)
         configComm.loadConfig()
     except Exception:
-        print "Exit the program for config file read error"
+        print ("Exit the program for config file read error")
         exit(1)
 
     if partNameSection.lower() == 'all':

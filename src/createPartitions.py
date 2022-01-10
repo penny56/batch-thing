@@ -37,7 +37,7 @@ class createPartitions:
 
     def run(self):
         
-        print "createPartitions starting >>>"
+        print ("createPartitions starting >>>")
         # construct partition template
         partitionTempl = dict()
         partitionTempl["type"] = self.partCommDict["par_type"]
@@ -77,7 +77,7 @@ class createPartitions:
                 exit(1)
             time.sleep(1)
             
-        print "createPartitions completed ..."
+        print ("createPartitions completed ...")
 
 
 if __name__ == '__main__':
@@ -92,7 +92,7 @@ if __name__ == '__main__':
         configComm = configFile(cf)
         configComm.loadConfig()
     except Exception:
-        print "Exit the program for config file read error"
+        print ("Exit the program for config file read error")
         exit(1)
 
     partCommDict = eval(configComm.sectionDict['partition']['commondict'])

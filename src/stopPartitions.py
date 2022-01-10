@@ -37,7 +37,7 @@ class stopPartitions:
 
     def run(self):
 
-        print "stopPartitions starting >>>"
+        print ("stopPartitions starting >>>")
         for partName in self.partNameList:
             try:
                 partObj = self.dpmObj.cpc.partitions.find(name = partName)
@@ -68,7 +68,7 @@ class stopPartitions:
             else:
                 self.logger.info(partName + " stop failed for in " + str(partObj.get_property('status')) + " state !!!")
 
-        print "stopPartitions completed ..."
+        print ("stopPartitions completed ...")
 
 
 if __name__ == '__main__':
@@ -83,7 +83,7 @@ if __name__ == '__main__':
         configComm = configFile(cf)
         configComm.loadConfig()
     except Exception:
-        print "Exit the program for config file read error"
+        print ("Exit the program for config file read error")
         exit(1)
         
     partNameList = eval(configComm.sectionDict['partition'][partNameSection])

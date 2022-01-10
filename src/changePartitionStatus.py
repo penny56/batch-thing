@@ -33,7 +33,7 @@ class changePartitionStatus:
 
     def run(self):
         
-        print "changePartitionStatus starting >>>"
+        print ("changePartitionStatus starting >>>")
         # Check partition status
         for i in range(self.counter):
             for partName in self.partNameList:
@@ -54,7 +54,7 @@ class changePartitionStatus:
                     # wait for the next loop
                     pass
 
-        print "changePartitionStatus completed ..."
+        print ("changePartitionStatus completed ...")
 
     def startPartition(self, partObj):
         
@@ -90,7 +90,7 @@ if __name__ == '__main__':
         configComm = configFile(cf)
         configComm.loadConfig()
     except Exception:
-        print "Exit the program for config file read error"
+        print ("Exit the program for config file read error")
         exit(1)
 
     partNameList = eval(configComm.sectionDict['partition'][partNameSection])
