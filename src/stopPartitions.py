@@ -66,7 +66,7 @@ class stopPartitions:
                 self.logger.info(partName + " stop successful " + str(end - start))
                 self.timespan[partName] = str(end - start)
             else:
-                self.logger.info(partName + " stop failed for in " + str(partObj.get_property('status')) + " state !!!")
+                self.logger.info(partName + " stop skipped for in " + str(partObj.get_property('status')) + " state !!!")
 
         print ("stopPartitions completed ...")
 
