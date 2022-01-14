@@ -33,7 +33,7 @@ class dpm:
         self.__user_psw = conSection["psw"]
         self.cpc_name = conSection["cpc"]
 
-        self.session = zhmcclient.Session(self.hmc_host, self.__user_id, self.__user_psw)
+        self.session = zhmcclient.Session(self.hmc_host, self.__user_id, self.__user_psw, verify_cert=False)
         self.client = zhmcclient.Client(self.session)
         self.cpc = self.client.cpcs.find_by_name(self.cpc_name)
 
