@@ -1,0 +1,45 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "name": "rhel21",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/partitionLifecycle.py",
+            "args": ["a90.cfg", "lcrhel21"],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "ubut31",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/partitionLifecycle.py",
+            "args": ["a90.cfg", "lcubut31"],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "ubut3",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/partitionLifecycle.py",
+            "args": ["a90.cfg", "lcubut3"],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "ubut35",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/partitionLifecycle.py",
+            "args": ["a90.cfg", "lcubut35"],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ]
+}
