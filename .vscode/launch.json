@@ -40,6 +40,15 @@
             "args": ["a90.cfg", "lcubut35"],
             "console": "integratedTerminal",
             "justMyCode": true
+        },
+        {
+            "name": "t257-kvmp2*",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/partitionLifecycle.py",
+            "args": ["t257.cfg", "lckvmp2"],
+            "console": "integratedTerminal",
+            "justMyCode": true
         }
     ]
 }
