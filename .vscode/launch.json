@@ -49,6 +49,15 @@
             "args": ["t257.cfg", "lckvmp2"],
             "console": "integratedTerminal",
             "justMyCode": true
+        },
+        {
+            "name": "t257-longparts",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/partitionLifecycle.py",
+            "args": ["t257.cfg", "lclongparts"],
+            "console": "integratedTerminal",
+            "justMyCode": true
         }
     ]
 }
