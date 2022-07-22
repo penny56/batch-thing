@@ -31,9 +31,6 @@ class startPartitions:
         self.logger = log.getlogger(self.dpmObj.cpc_name + '-' + self.__class__.__name__)
         # identify the wait time until the start/stop action completed, 600 = 10mins
         self.timeout = 600
-        # To out put to lifecycle module
-        self.timespan = dict()
-        
 
     def run(self):
 
@@ -45,25 +42,20 @@ class startPartitions:
                 self.logger.info(partName + " start failed -- couldn't find !!!")
                 continue
             if str(partObj.get_property('status')) == 'stopped':
-                start = int(time.time())
                 try:
                     partObj.start(wait_for_completion = True, operation_timeout = self.timeout, status_timeout = self.timeout)
                 except (zhmcclient.HTTPError, Exception) as e:
                     self.logger.info(partName + " start failed !!!")
                     os.system("echo 1 > ./disabled")
-                    # Record the failed log information
+                    # Generate a log file dedicate for this failure.
                     loggerFailed = log.getlogger(time.strftime('%Y-%m-%d_%H-%M-%S_', time.localtime()) + self.dpmObj.cpc_name + '-' + self.__class__.__name__)
-                    loggerFailed.info("<< " + partName + " partition start failed by the following reason, reference WSAPI doc for code details explanation >>")
-                    loggerFailed.info("===>")
-                    loggerFailed.info("http_status: " + str(e.http_status))
-                    loggerFailed.info("reason: " + str(e.reason))
-                    loggerFailed.info("message: " + str(e.message))
+                    loggerFailed.info(partName + " partition start failed. >>")
+                    loggerFailed.info("<Exception sub-class>: [http_status],[reason]: <message> FORMAT >>")
+                    loggerFailed.info("{}: {}".format(e.__class__.__name__, e))
                     loggerFailed.info("== The longevity script is stopped until you delete the disabled file ==")
-    
+
+
                     exit(1)
-                end = int(time.time())
-                self.logger.info(partName + " start successful " + str(end - start))
-                self.timespan[partName] = str(end - start)
 
         print ("startPartitions completed ...")
 

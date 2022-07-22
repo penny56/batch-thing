@@ -22,7 +22,7 @@ python setBootOptions.py t90.cfg rhel
 @author: mayijie
 '''
 
-import sys, time
+import sys, time, os
 import zhmcclient
 from configFile import configFile
 from dpm import dpm
@@ -57,9 +57,15 @@ class setBootOptions:
                 bootTempl2['boot-device'] = 'storage-volume'
                 partObj.update_properties(bootTempl2)
                 self.logger.info("partition " + partName + " set boot option successful")
-            except Exception as e:
+            except zhmcclient.Error as e:
                 self.logger.info("partition " + partName + " set boot option sg: " + sgName + ", sv UUID: " + svUUID + ", failed !!!")
-            
+                os.system("echo 1 > ./disabled")
+                # Generate a log file dedicate for this failure.
+                loggerFailed = log.getlogger(time.strftime('%Y-%m-%d_%H-%M-%S_', time.localtime()) + self.dpmObj.cpc_name + '-' + self.__class__.__name__)
+                loggerFailed.info(partName + " partition set boot option failed. >>")
+                loggerFailed.info("<Exception sub-class>: [http_status],[reason]: <message> FORMAT >>")
+                loggerFailed.info("{}: {}".format(e.__class__.__name__, e))
+
             time.sleep(1)
 
         print ("setBootOptions completed ...")

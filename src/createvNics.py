@@ -74,13 +74,11 @@ class createvNics:
             except zhmcclient.HTTPError as e:
                 self.logger.info("vNic " + vnicTempl["name"] + " in partition " + partName + " created failed !!!")
                 os.system("echo 1 > ./disabled")
-                # Record the failed log information
+                # Generate a log file dedicate for this failure.
                 loggerFailed = log.getlogger(time.strftime('%Y-%m-%d_%H-%M-%S_', time.localtime()) + self.dpmObj.cpc_name + '-' + self.__class__.__name__)
-                loggerFailed.info("<< vNic " + vnicTempl["name"] + " in partition " + partName + " created failed >>")
-                loggerFailed.info("===>")
-                loggerFailed.info("http_status: " + str(e.http_status))
-                loggerFailed.info("reason: " + str(e.reason))
-                loggerFailed.info("message: " + str(e.message))
+                loggerFailed.info("vNic " + vnicTempl["name"] + " in partition " + partName + " create failed. >>")
+                loggerFailed.info("<Exception sub-class>: [http_status],[reason]: <message> FORMAT >>")
+                loggerFailed.info("{}: {}".format(e.__class__.__name__, e))
                 loggerFailed.info("== The longevity script is stopped until you delete the disabled file ==")
 
                 exit(1)

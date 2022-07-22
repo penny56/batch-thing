@@ -52,22 +52,14 @@ class partitionLifecycle:
 
         for i in range(self.counter):
             stopObj.run()
-            '''
-            for partName, timespan in stopObj.timespan.items():
-                self.logger.info(partName + " stop successful " + timespan)
-            '''
             # ??? Sometimes delete partition failed due to in stopping state
-            time.sleep(10)
+            time.sleep(5)
             delObj.run()
             createObj.run()
             vNicObj.run()
             attachObj.run()
             bootObj.run()
             startObj.run()
-            '''
-            for partName, timespan in startObj.timespan.items():
-                self.logger.info(partName + " start successful " + timespan)
-            '''
             print ("partitionLifecycle sleeping -----------------------------------------------> 30s ...")
             time.sleep(30)
             

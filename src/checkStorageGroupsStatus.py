@@ -29,7 +29,7 @@ class checkStorageGroupsStatus:
 
     def run(self):
         
-        print "checkStorageGroupsStatus starting >>>"
+        print ("checkStorageGroupsStatus starting >>>")
 
         for cpcSg in self.dpmObj.cpc.list_associated_storage_groups():
             if cpcSg.get_property('type') == 'fcp':
@@ -39,7 +39,7 @@ class checkStorageGroupsStatus:
                 if self.sgNameList == None or sgName in self.sgNameList:
                     self.logger.info(sgName + " in " + sgStatus + " state !")
         
-        print "checkStorageGroupsStatus completed ..."
+        print ("checkStorageGroupsStatus completed ...")
 
 
 if __name__ == '__main__':
@@ -54,7 +54,7 @@ if __name__ == '__main__':
         configComm = configFile(cf)
         configComm.loadConfig()
     except Exception:
-        print "Exit the program for config file read error"
+        print ("Exit the program for config file read error")
         exit(1)
         
     if sgNameSection.lower() == 'all':

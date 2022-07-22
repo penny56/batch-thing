@@ -37,18 +37,6 @@ class checkPartitionStatus:
             status = cpcPart.get_property('status')
             if self.partNameList == None or partName in self.partNameList:
                 self.logger.info(partName + " in " + status + " state !")
-
-        '''
-        for partName in self.partNameList:
-            
-            try:
-                partObj = self.dpmObj.cpc.partitions.find(name = partName)
-                status = partObj.get_property('status')
-                self.logger.info(partName + " in " + status + " state !")
-            except (zhmcclient.HTTPError, zhmcclient.ParseError) as e:
-                self.logger.info(partName + "can't find !")
-            time.sleep(1)
-        '''
                 
         print ("checkPartitionStatus completed ...")
 
