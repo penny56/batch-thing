@@ -55,17 +55,15 @@ class attachStorageGroups:
                     partObj.attach_storage_group(sgObj)
                     self.logger.info("Partition " + partName + " attach storage group " + sgName + " successful")
                 except Exception as e:
-                    self.logger.info("Partition " + partName + " attach storage group " + sgName + " exception failed !!!")
+                    self.logger.info("Partition " + partName + " attach storage group " + sgName + " failed !!!")
                     os.system("echo 1 > ./disabled")
-                    # Record the failed log information
+                    # Generate a log file dedicate for this failure.
                     loggerFailed = log.getlogger(time.strftime('%Y-%m-%d_%H-%M-%S_', time.localtime()) + self.dpmObj.cpc_name + '-' + self.__class__.__name__)
-                    loggerFailed.info("<< Partition " + partName + " attach storage group " + sgName + " exception failed >>")
-                    loggerFailed.info("===>")
-                    loggerFailed.info("http_status: " + str(e.http_status))
-                    loggerFailed.info("reason: " + str(e.reason))
-                    loggerFailed.info("message: " + str(e.message))
+                    loggerFailed.info("<< Partition " + partName + " attach storage group " + sgName + " failed >>")
+                    loggerFailed.info("<Exception sub-class>: [http_status],[reason]: <message> FORMAT >>")
+                    loggerFailed.info("{}: {}".format(e.__class__.__name__, e))
                     loggerFailed.info("== The longevity script is stopped until you delete the disabled file ==")
-    
+
                     exit(1)
                 
                 # update the device numbers
@@ -137,17 +135,15 @@ class attachStorageGroups:
                 try:
                     vsr.update_properties(newValue)
                 except zhmcclient.HTTPError as e:
-                    self.logger.info("exception failed when setting device numbers " + str(newValue) + " !!!")
+                    self.logger.info("Setting device numbers " + str(newValue) + " failed !!!")
                     os.system("echo 1 > ./disabled")
-                    # Record the failed log information
+                    # Generate a log file dedicate for this failure.
                     loggerFailed = log.getlogger(time.strftime('%Y-%m-%d_%H-%M-%S_', time.localtime()) + self.dpmObj.cpc_name + '-' + self.__class__.__name__)
-                    loggerFailed.info("<< Exception failed when setting device numbers " + str(newValue) + " >>")
-                    loggerFailed.info("===>")
-                    loggerFailed.info("http_status: " + str(e.http_status))
-                    loggerFailed.info("reason: " + str(e.reason))
-                    loggerFailed.info("message: " + str(e.message))
+                    loggerFailed.info("Exception failed when setting device numbers " + str(newValue) + " >>")
+                    loggerFailed.info("<Exception sub-class>: [http_status],[reason]: <message> FORMAT >>")
+                    loggerFailed.info("{}: {}".format(e.__class__.__name__, e))
                     loggerFailed.info("== The longevity script is stopped until you delete the disabled file ==")
-    
+
                     exit(1)
                     
         else:
