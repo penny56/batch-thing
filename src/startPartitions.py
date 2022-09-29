@@ -46,7 +46,7 @@ class startPartitions:
                 try:
                     tBegin = int(time.time())
                     partObj.start(wait_for_completion = True, operation_timeout = self.timeout, status_timeout = self.timeout)
-                    tEnd = int(time())
+                    tEnd = int(time.time())
                     self.logger.info(partName + " partition started successful in " + str(tEnd - tBegin) + " seconds")
                 except (zhmcclient.HTTPError, Exception) as e:
                     self.logger.info(partName + " start failed !!!")

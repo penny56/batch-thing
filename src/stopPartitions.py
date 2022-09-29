@@ -46,7 +46,7 @@ class stopPartitions:
                 try:
                     tBegin = int(time.time())
                     partObj.stop(wait_for_completion = True, operation_timeout = self.timeout)
-                    tEnd = int(time())
+                    tEnd = int(time.time())
                     self.logger.info(partName + " partition stopped successful in " + str(tEnd - tBegin) + " seconds")
                 except zhmcclient.Error as e:
                     self.logger.info(partName + " stop failed !!!")
