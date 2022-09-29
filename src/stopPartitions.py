@@ -44,8 +44,10 @@ class stopPartitions:
             # ??? exception: HTTPError: 404,1: Not found or not authorized [GET /api/partitions/d64092b6-1116-11ea-b8df-00106f24553e]
             if str(partObj.get_property('status')) != 'stopped':
                 try:
+                    tBegin = int(time.time())
                     partObj.stop(wait_for_completion = True, operation_timeout = self.timeout)
-                    self.logger.info(partName + " partition stop successful")
+                    tEnd = int(time())
+                    self.logger.info(partName + " partition stopped successful in " + str(tEnd - tBegin) + " seconds")
                 except zhmcclient.Error as e:
                     self.logger.info(partName + " stop failed !!!")
                     os.system("echo 1 > ./disabled")
