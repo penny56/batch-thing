@@ -38,6 +38,7 @@ class setBootOptions:
             self.dpmObj = lcdpm
         self.bootCommDict = bootCommDict
         self.logger = log.getlogger(self.dpmObj.cpc_name + '-' + self.__class__.__name__)
+        self.timeout = 600
 
 
     def run(self):
@@ -53,9 +54,12 @@ class setBootOptions:
                 bootTempl = dict()
                 bootTempl['boot-storage-volume'] = svObj.uri
                 partObj.update_properties(bootTempl)
-                bootTempl2 = dict()
-                bootTempl2['boot-device'] = 'storage-volume'
-                partObj.update_properties(bootTempl2)
+                bootTempl.clear()
+                bootTempl['boot-device'] = 'storage-volume'
+                partObj.update_properties(bootTempl)
+                bootTempl.clear()
+                bootTempl['boot-timeout'] = self.timeout
+                partObj.update_properties(bootTempl)
                 self.logger.info("partition " + partName + " set boot option successful")
             except zhmcclient.Error as e:
                 self.logger.info("partition " + partName + " set boot option sg: " + sgName + ", sv UUID: " + svUUID + ", failed !!!")
