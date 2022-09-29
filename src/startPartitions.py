@@ -44,6 +44,7 @@ class startPartitions:
             if str(partObj.get_property('status')) == 'stopped':
                 try:
                     partObj.start(wait_for_completion = True, operation_timeout = self.timeout, status_timeout = self.timeout)
+                    self.logger.info(partName + " partition start successful")
                 except (zhmcclient.HTTPError, Exception) as e:
                     self.logger.info(partName + " start failed !!!")
                     os.system("echo 1 > ./disabled")

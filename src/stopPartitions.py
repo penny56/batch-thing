@@ -45,6 +45,7 @@ class stopPartitions:
             if str(partObj.get_property('status')) != 'stopped':
                 try:
                     partObj.stop(wait_for_completion = True, operation_timeout = self.timeout)
+                    self.logger.info(partName + " partition stop successful")
                 except zhmcclient.Error as e:
                     self.logger.info(partName + " stop failed !!!")
                     os.system("echo 1 > ./disabled")
