@@ -50,7 +50,7 @@ class startPartitions:
                     self.logger.info(partName + " partition started successful in " + str(tEnd - tBegin) + " seconds")
                 except (zhmcclient.HTTPError, Exception) as e:
                     self.logger.info(partName + " start failed !!!")
-                    os.system("echo 1 > ./disabled")
+                    os.system("echo 1 > ./%s" % ("disabled" + "." + self.dpmObj.cpc_name.lower()))
                     # Generate a log file dedicate for this failure.
                     loggerFailed = log.getlogger(time.strftime('%Y-%m-%d_%H-%M-%S_', time.localtime()) + self.dpmObj.cpc_name + '-' + self.__class__.__name__)
                     loggerFailed.info(partName + " partition start failed. >>")

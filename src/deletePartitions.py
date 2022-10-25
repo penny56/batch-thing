@@ -46,7 +46,7 @@ class deletePartitions:
                     self.logger.info(partName + " delete successful")
                 except (zhmcclient.HTTPError, Exception) as e:
                     self.logger.info(partName + " delete failed !!!")
-                    os.system("echo 1 > ./disabled")
+                    os.system("echo 1 > ./%s" % ("disabled" + "." + self.dpmObj.cpc_name.lower()))
                     # Generate a log file dedicate for this failure.
                     loggerFailed = log.getlogger(time.strftime('%Y-%m-%d_%H-%M-%S_', time.localtime()) + self.dpmObj.cpc_name + '-' + self.__class__.__name__)
                     loggerFailed.info(partName + " partition delete failed. >>")

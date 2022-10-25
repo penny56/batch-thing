@@ -56,7 +56,7 @@ class attachStorageGroups:
                     self.logger.info("Partition " + partName + " attach storage group " + sgName + " successful")
                 except Exception as e:
                     self.logger.info("Partition " + partName + " attach storage group " + sgName + " failed !!!")
-                    os.system("echo 1 > ./disabled")
+                    os.system("echo 1 > ./%s" % ("disabled" + "." + self.dpmObj.cpc_name.lower()))
                     # Generate a log file dedicate for this failure.
                     loggerFailed = log.getlogger(time.strftime('%Y-%m-%d_%H-%M-%S_', time.localtime()) + self.dpmObj.cpc_name + '-' + self.__class__.__name__)
                     loggerFailed.info("<< Partition " + partName + " attach storage group " + sgName + " failed >>")
@@ -136,7 +136,7 @@ class attachStorageGroups:
                     vsr.update_properties(newValue)
                 except zhmcclient.HTTPError as e:
                     self.logger.info("Setting device numbers " + str(newValue) + " failed !!!")
-                    os.system("echo 1 > ./disabled")
+                    os.system("echo 1 > ./%s" % ("disabled" + "." + self.dpmObj.cpc_name.lower()))
                     # Generate a log file dedicate for this failure.
                     loggerFailed = log.getlogger(time.strftime('%Y-%m-%d_%H-%M-%S_', time.localtime()) + self.dpmObj.cpc_name + '-' + self.__class__.__name__)
                     loggerFailed.info("Exception failed when setting device numbers " + str(newValue) + " >>")

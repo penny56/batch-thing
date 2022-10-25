@@ -6,56 +6,20 @@
     "configurations": [
 
         {
-            "name": "rhel21",
+            "name": "a90-longpart1",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/src/partitionLifecycle.py",
-            "args": ["a90.cfg", "lcrhel21"],
+            "args": ["a90.cfg", "lclongpart1"],
             "console": "integratedTerminal",
             "justMyCode": true
         },
         {
-            "name": "ubut31",
+            "name": "a257-longparts",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/src/partitionLifecycle.py",
-            "args": ["a90.cfg", "lcubut31"],
-            "console": "integratedTerminal",
-            "justMyCode": true
-        },
-        {
-            "name": "ubut3",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/src/partitionLifecycle.py",
-            "args": ["a90.cfg", "lcubut3"],
-            "console": "integratedTerminal",
-            "justMyCode": true
-        },
-        {
-            "name": "ubut35",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/src/partitionLifecycle.py",
-            "args": ["a90.cfg", "lcubut35"],
-            "console": "integratedTerminal",
-            "justMyCode": true
-        },
-        {
-            "name": "t257-kvmp2*",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/src/partitionLifecycle.py",
-            "args": ["t257.cfg", "lckvmp2"],
-            "console": "integratedTerminal",
-            "justMyCode": true
-        },
-        {
-            "name": "t257-longparts",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/src/partitionLifecycle.py",
-            "args": ["t257.cfg", "lclongparts"],
+            "args": ["a257.cfg", "lclongparts"],
             "console": "integratedTerminal",
             "justMyCode": true
         }

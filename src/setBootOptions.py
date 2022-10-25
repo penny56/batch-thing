@@ -63,7 +63,7 @@ class setBootOptions:
                 self.logger.info("partition " + partName + " set boot option successful")
             except zhmcclient.Error as e:
                 self.logger.info("partition " + partName + " set boot option sg: " + sgName + ", sv UUID: " + svUUID + ", failed !!!")
-                os.system("echo 1 > ./disabled")
+                os.system("echo 1 > ./%s" % ("disabled" + "." + self.dpmObj.cpc_name.lower()))
                 # Generate a log file dedicate for this failure.
                 loggerFailed = log.getlogger(time.strftime('%Y-%m-%d_%H-%M-%S_', time.localtime()) + self.dpmObj.cpc_name + '-' + self.__class__.__name__)
                 loggerFailed.info(partName + " partition set boot option failed. >>")
