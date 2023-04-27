@@ -22,6 +22,15 @@
             "args": ["a257.cfg", "lclongparts"],
             "console": "integratedTerminal",
             "justMyCode": true
+        },
+        {
+            "name": "a257-longpart2",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/partitionLifecycle.py",
+            "args": ["a257.cfg", "lclongpart2"],
+            "console": "integratedTerminal",
+            "justMyCode": true
         }
     ]
 }

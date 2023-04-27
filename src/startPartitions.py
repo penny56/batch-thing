@@ -56,8 +56,12 @@ class startPartitions:
                     loggerFailed.info(partName + " partition start failed. >>")
                     loggerFailed.info("<Exception sub-class>: [http_status],[reason]: <message> FORMAT >>")
                     loggerFailed.info("{}: {}".format(e.__class__.__name__, e))
+                    # Show up the partition boot option values
+                    loggerFailed.info(" Boot from: " + str(partObj.get_property('boot-device')))
+                    loggerFailed.info(" Boot volume uri: " + str(partObj.get_property('boot-storage-volume')))
+                    loggerFailed.info(" Secure boot: " + str(partObj.get_property('secure-boot')))
+                    loggerFailed.info(" Boot time out: " + str(partObj.get_property('boot-timeout')))
                     loggerFailed.info("== The longevity script is stopped until you delete the disabled file ==")
-
 
                     exit(1)
 
