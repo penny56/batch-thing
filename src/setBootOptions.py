@@ -61,7 +61,7 @@ class setBootOptions:
                 bootTempl['boot-timeout'] = self.timeout
                 partObj.update_properties(bootTempl)
                 self.logger.info("partition " + partName + " set boot option successful")
-            except zhmcclient.Error as e:
+            except (zhmcclient.Error, Exception) as e:
                 self.logger.info("partition " + partName + " set boot option sg: " + sgName + ", sv UUID: " + svUUID + ", failed !!!")
                 os.system("echo 1 > ./%s" % ("disabled" + "." + self.dpmObj.cpc_name.lower()))
                 # Generate a log file dedicate for this failure.
