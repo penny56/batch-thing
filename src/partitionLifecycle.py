@@ -60,8 +60,8 @@ class partitionLifecycle:
             attachObj.run()
             bootObj.run()
             startObj.run()
-            print ("partitionLifecycle sleeping -----------------------------------------------> 30s ...")
-            time.sleep(30)
+            print ("partitionLifecycle sleeping -----------------------------------------------> 5s ...")
+            time.sleep(5)
             
         print ("partitionLifecycle completed ...")
 
