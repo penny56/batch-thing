@@ -48,23 +48,32 @@ class setBootOptions:
             partObj = self.dpmObj.cpc.partitions.find(name = partName)
             sgName = sg_sv.split(' ')[0]
             svUUID = sg_sv.split(' ')[-1]
-            stage = "Stage: "
+            loggerStage = "Stage: "
             try:
                 sgObj = self.dpmObj.cpc.list_associated_storage_groups(filter_args={'name' : sgName}).pop()
                 svObj = sgObj.storage_volumes.list(filter_args={'uuid' : svUUID}).pop()
+                loggerStage += "0/3) get svObj = " + svObj + "\n"
+                time.sleep(1)
+
                 bootTempl = dict()
                 bootTempl['boot-storage-volume'] = svObj.uri
                 partObj.update_properties(bootTempl)
-                stage += "1/3) set 'boot-storage-volume = volume uri' "
+                loggerStage += "1/3) set 'boot-storage-volume' = " + bootTempl['boot-storage-volume'] + "\n"
+                time.sleep(1)
+
                 bootTempl.clear()
                 bootTempl['boot-device'] = 'storage-volume'
                 partObj.update_properties(bootTempl)
-                stage += "2/3) set 'boot-device = storage-volume' "
+                loggerStage += "2/3) set 'boot-device = " + "storage-volume" + "\n"
+                time.sleep(1)
+
                 bootTempl.clear()
                 bootTempl['boot-timeout'] = self.timeout
                 partObj.update_properties(bootTempl)
-                stage += "3/3) set 'boot-timeout = 600' "
+                loggerStage += "3/3) set 'boot-timeout' = " + self.timeout + "\n"
                 self.logger.info("partition " + partName + " set boot option successful")
+                time.sleep(1)
+
             except (zhmcclient.Error, Exception) as e:
                 self.logger.info("partition " + partName + " set boot option sg: " + sgName + ", sv UUID: " + svUUID + ", failed !!!")
                 os.system("echo 1 > ./%s" % ("disabled" + "." + self.dpmObj.cpc_name.lower()))
@@ -73,12 +82,9 @@ class setBootOptions:
                 loggerFailed.info(partName + " partition set boot option failed. >>")
                 loggerFailed.info("<Exception sub-class>: [http_status],[reason]: <message> FORMAT >>")
                 loggerFailed.info("{}: {}".format(e.__class__.__name__, e))
-                loggerFailed.info(stage)
+                loggerFailed.info(loggerStage)
                 loggerFailed.info("== The longevity script is stopped until you delete the disabled file ==")
-
                 exit(1)
-
-            time.sleep(1)
 
         print ("setBootOptions completed ...")
 
