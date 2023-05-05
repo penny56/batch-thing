@@ -76,11 +76,10 @@ class setBootOptions:
                 time.sleep(1)
 
             except (zhmcclient.Error, Exception) as e:
-                self.logger.info("partition " + partName + " set boot option sg: " + sgName + ", sv UUID: " + svUUID + ", failed !!!")
                 os.system("echo 1 > ./%s" % ("disabled" + "." + self.dpmObj.cpc_name.lower()))
                 # Generate a log file dedicate for this failure.
                 loggerFailed = log.getlogger(time.strftime('%Y-%m-%d_%H-%M-%S_', time.localtime()) + self.dpmObj.cpc_name + '-' + self.__class__.__name__)
-                loggerFailed.info(partName + " partition set boot option failed. >>")
+                loggerFailed.info("partition " + partName + " set boot option sg: " + sgName + ", sv UUID: " + svUUID + ", failed !!!")
                 loggerFailed.info("<Exception sub-class>: [http_status],[reason]: <message> FORMAT >>")
                 loggerFailed.info("{}: {}".format(e.__class__.__name__, e))
                 loggerFailed.info(loggerStage)
