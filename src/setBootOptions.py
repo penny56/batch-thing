@@ -48,29 +48,30 @@ class setBootOptions:
             partObj = self.dpmObj.cpc.partitions.find(name = partName)
             sgName = sg_sv.split(' ')[0]
             svUUID = sg_sv.split(' ')[-1]
-            loggerStage = "Stage: "
+            loggerStage = ""
+            space = " "
             try:
                 sgObj = self.dpmObj.cpc.list_associated_storage_groups(filter_args={'name' : sgName}).pop()
                 svObj = sgObj.storage_volumes.list(filter_args={'uuid' : svUUID}).pop()
-                loggerStage += "0/3) get svObj = " + svObj + "\n"
+                loggerStage += "0/3) get svObj = " + str(svObj) + "\n"
                 time.sleep(1)
 
                 bootTempl = dict()
                 bootTempl['boot-storage-volume'] = svObj.uri
                 partObj.update_properties(bootTempl)
-                loggerStage += "1/3) set 'boot-storage-volume' = " + bootTempl['boot-storage-volume'] + "\n"
+                loggerStage += space*26 + "1/3) set 'boot-storage-volume' = " + bootTempl['boot-storage-volume'] + "\n"
                 time.sleep(1)
 
                 bootTempl.clear()
                 bootTempl['boot-device'] = 'storage-volume'
                 partObj.update_properties(bootTempl)
-                loggerStage += "2/3) set 'boot-device = " + "storage-volume" + "\n"
+                loggerStage += space*26 + "2/3) set 'boot-device = " + "storage-volume" + "\n"
                 time.sleep(1)
 
                 bootTempl.clear()
                 bootTempl['boot-timeout'] = self.timeout
                 partObj.update_properties(bootTempl)
-                loggerStage += "3/3) set 'boot-timeout' = " + self.timeout + "\n"
+                loggerStage += space*26 + "3/3) set 'boot-timeout' = " + str(self.timeout) + "\n"
                 self.logger.info("partition " + partName + " set boot option successful")
                 time.sleep(1)
 
