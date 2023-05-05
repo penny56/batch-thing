@@ -10,7 +10,7 @@
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/src/partitionLifecycle.py",
-            "args": ["a90.cfg", "lclongpart1"],
+            "args": ["${workspaceFolder}/a90.cfg", "lclongpart1"],
             "console": "integratedTerminal",
             "justMyCode": true
         },
@@ -19,7 +19,7 @@
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/src/partitionLifecycle.py",
-            "args": ["a257.cfg", "lclongparts"],
+            "args": ["${workspaceFolder}/a257.cfg", "lclongparts"],
             "console": "integratedTerminal",
             "justMyCode": true
         },
@@ -28,7 +28,7 @@
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/src/partitionLifecycle.py",
-            "args": ["a257.cfg", "lclongpart2"],
+            "args": ["${workspaceFolder}/a257.cfg", "lclongpart2"],
             "console": "integratedTerminal",
             "justMyCode": true
         }
