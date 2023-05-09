@@ -13,7 +13,6 @@ python checkAdaptersStatus.py t90.cfg all
 '''
 
 import sys, time
-import zhmcclient
 from configFile import configFile
 from dpm import dpm
 from log import log

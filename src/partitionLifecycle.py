@@ -14,7 +14,6 @@ python partitionLifecycle.py t90.cfg ubuntu
 '''
 
 import sys, time, os
-import zhmcclient
 from configFile import configFile
 from dpm import dpm
 from log import log

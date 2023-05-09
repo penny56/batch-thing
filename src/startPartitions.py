@@ -14,7 +14,6 @@ python startPartitions.py t90.cfg ubuntu
 '''
 
 import sys, time, os
-from tracemalloc import start
 import zhmcclient
 from configFile import configFile
 from dpm import dpm
