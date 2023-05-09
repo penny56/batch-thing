@@ -75,8 +75,8 @@ if __name__ == '__main__':
         print ("Please input the configure file name and key name in [lifecycle] as parameters!\nQuitting....")
         exit(1)
 
-    # check if disabled file is enabled
-    disabled = "disabled" + '.' + cf.split('.')[0]
+    # check if disabled file is enabled (get the cpc name from the config file path)
+    disabled = "disabled" + '.' + cf.split('/')[-1].split('.')[0]
     if os.path.isfile(disabled):
         with open(disabled, 'r') as f:
             # get the 1st character in the 1st line
