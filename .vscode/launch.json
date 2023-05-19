@@ -15,6 +15,15 @@
             "justMyCode": true
         },
         {
+            "name": "a90-longparts",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/partitionLifecycle.py",
+            "args": ["${workspaceFolder}/a90.cfg", "lclongparts"],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
             "name": "a257-longparts",
             "type": "python",
             "request": "launch",
