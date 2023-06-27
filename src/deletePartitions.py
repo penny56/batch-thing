@@ -34,6 +34,9 @@ class deletePartitions:
     def run(self):
 
         print ("deletePartitions starting >>>")
+
+        time.sleep(2)
+
         for partName in self.partNameList:
             try:
                 partObj = self.dpmObj.cpc.partitions.find(name = partName)

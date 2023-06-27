@@ -23,6 +23,7 @@ from createPartitions import createPartitions
 from createvNics import createvNics
 from attachStorageGroups import attachStorageGroups
 from setBootOptions import setBootOptions
+from startFcpStorageDiscovery import startFcpStorageDiscovery
 from startPartitions import startPartitions
 
 
@@ -47,17 +48,17 @@ class partitionLifecycle:
         vNicObj = createvNics(self.dpmObj, self.vnicCommDict, self.partNameList)
         attachObj = attachStorageGroups(self.dpmObj, self.attachCommDict)
         bootObj = setBootOptions(self.dpmObj, self.bootCommDict)
+        startFcpStorageDiscoveryObj = startFcpStorageDiscovery(self.dpmObj, self.bootCommDict)
         startObj = startPartitions(self.dpmObj, self.partNameList)
 
         for i in range(self.counter):
             stopObj.run()
-            # ??? Sometimes delete partition failed due to in stopping state
-            time.sleep(5)
             delObj.run()
             createObj.run()
             vNicObj.run()
             attachObj.run()
             bootObj.run()
+            startFcpStorageDiscoveryObj.run()
             startObj.run()
             print ("partitionLifecycle sleeping -----------------------------------------------> 5s ...")
             time.sleep(5)
