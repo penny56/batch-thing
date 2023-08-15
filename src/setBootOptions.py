@@ -63,6 +63,9 @@ class setBootOptions:
                 time.sleep(1)
 
                 bootTempl.clear()
+                # ############## this part is for the verify
+                loggerStage += space*26 + "1.5/3) get 'boot-storage-volume' property:" + str(partObj.get_property('boot-storage-volume')) + "\n"
+                # ##########################################
                 bootTempl['boot-device'] = 'storage-volume'
                 partObj.update_properties(bootTempl)
                 loggerStage += space*26 + "2/3) set 'boot-device = " + "storage-volume" + "\n"
