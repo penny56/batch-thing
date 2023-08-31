@@ -56,6 +56,8 @@ class setBootOptions:
                 loggerStage += "0/3) get svObj = " + str(svObj) + "\n"
                 time.sleep(1)
 
+                loggerStage += "0.5/3) partition status is " + str(partObj.get_property('status')) + "\n"
+
                 bootTempl = dict()
                 bootTempl['boot-storage-volume'] = svObj.uri
                 partObj.update_properties(bootTempl)
