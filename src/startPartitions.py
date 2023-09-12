@@ -63,6 +63,8 @@ class startPartitions:
                     loggerFailed.info("== The longevity script is stopped until you delete the disabled file ==")
 
                     exit(1)
+            else:
+                self.logger.info(partName + " start skipped for in " + str(partObj.get_property('status')) + " state !!!")
 
         print ("startPartitions completed ...")
 

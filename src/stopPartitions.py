@@ -42,7 +42,7 @@ class stopPartitions:
                 self.logger.info(partName + " stop failed -- could not find !!!")
                 continue
             # ??? exception: HTTPError: 404,1: Not found or not authorized [GET /api/partitions/d64092b6-1116-11ea-b8df-00106f24553e]
-            if str(partObj.get_property('status')) != 'stopped':
+            if str(partObj.get_property('status')) == 'active':
                 try:
                     tBegin = int(time.time())
                     partObj.stop(wait_for_completion = True, operation_timeout = self.timeout)
