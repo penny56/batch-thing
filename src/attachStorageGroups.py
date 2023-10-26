@@ -70,7 +70,7 @@ class attachStorageGroups:
 
                 # devnumArray[:] is a slice of devnumArray but with a new object
                 # we use this to avoid the pop operation impact the original
-                self.updateDeviceNumbers(str(partObj.uri), sgObj, devnumArray[:])
+                self.updateDeviceNumbers(partObj, sgObj, devnumArray[:])
             
             time.sleep(1)
 
@@ -106,7 +106,9 @@ class attachStorageGroups:
         
         return result
         
-    def updateDeviceNumbers(self, partUri, sgObj, devnumArray):
+    def updateDeviceNumbers(self, partObj, sgObj, devnumArray):
+
+        partUri = str(partObj.uri)
 
         try:
             vsrs = sgObj.virtual_storage_resources.list()
@@ -140,6 +142,8 @@ class attachStorageGroups:
                     # Generate a log file dedicate for this failure.
                     loggerFailed = log.getlogger(time.strftime('%Y-%m-%d_%H-%M-%S_', time.localtime()) + self.dpmObj.cpc_name + '-' + self.__class__.__name__)
                     loggerFailed.info("Exception failed when setting device numbers " + str(newValue) + " >>")
+                    loggerFailed.info("Partition name: " + partObj.name + ", Partition status: " + partObj.get_property('status') + " >>")
+                    loggerFailed.info("Storage Group name: " + sgObj.name + ", Storage Group fulfillment-state: " + sgObj.get_property('fulfillment-state') + " >>")
                     loggerFailed.info("<Exception sub-class>: [http_status],[reason]: <message> FORMAT >>")
                     loggerFailed.info("{}: {}".format(e.__class__.__name__, e))
                     loggerFailed.info("== The longevity script is stopped until you delete the disabled file ==")
