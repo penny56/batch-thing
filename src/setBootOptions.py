@@ -49,34 +49,34 @@ class setBootOptions:
             sgName = sg_sv.split(' ')[0]
             svUUID = sg_sv.split(' ')[-1]
             loggerStage = ""
-            space = " "
+
             try:
+                loggerStage += "\n0/5) partition status is: " + str(partObj.get_property('status')) + "\n"
+
                 sgObj = self.dpmObj.cpc.list_associated_storage_groups(filter_args={'name' : sgName}).pop()
                 svObj = sgObj.storage_volumes.list(filter_args={'uuid' : svUUID}).pop()
-                loggerStage += "0/3) get svObj = " + str(svObj) + "\n"
+                loggerStage += "1/5) get svObj = " + str(svObj) + "done! \n"
                 time.sleep(1)
-
-                loggerStage += "0.5/3) partition status is " + str(partObj.get_property('status')) + "\n"
 
                 bootTempl = dict()
                 bootTempl['boot-storage-volume'] = svObj.uri
                 partObj.update_properties(bootTempl)
-                loggerStage += space*26 + "1/3) set 'boot-storage-volume' = " + bootTempl['boot-storage-volume'] + "\n"
+                loggerStage += "2/5) set 'boot-storage-volume' = " + bootTempl['boot-storage-volume'] + "done! \n"
                 time.sleep(1)
 
                 bootTempl.clear()
                 # ############## this part is for the verify
-                loggerStage += space*26 + "1.5/3) get 'boot-storage-volume' property:" + str(partObj.get_property('boot-storage-volume')) + "\n"
+                loggerStage += "3/5) get 'boot-storage-volume' property: " + str(partObj.get_property('boot-storage-volume')) + "same with step #2? \n"
                 # ##########################################
                 bootTempl['boot-device'] = 'storage-volume'
                 partObj.update_properties(bootTempl)
-                loggerStage += space*26 + "2/3) set 'boot-device = " + "storage-volume" + "\n"
+                loggerStage += "4/5) set 'boot-device' = 'storage-volume' done! \n"
                 time.sleep(1)
 
                 bootTempl.clear()
                 bootTempl['boot-timeout'] = self.timeout
                 partObj.update_properties(bootTempl)
-                loggerStage += space*26 + "3/3) set 'boot-timeout' = " + str(self.timeout) + "\n"
+                loggerStage += "5/5) set 'boot-timeout' = " + str(self.timeout) + "done! \n"
                 self.logger.info("partition " + partName + " set boot option successful")
                 time.sleep(1)
 
