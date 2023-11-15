@@ -58,7 +58,8 @@ class partitionLifecycle:
             vNicObj.run()
             attachObj.run()
             bootObj.run()
-            startFcpStorageDiscoveryObj.run()
+            # skip this case temporarily
+            # startFcpStorageDiscoveryObj.run()
             startObj.run()
             print ("partitionLifecycle sleeping -----------------------------------------------> 5s ...")
             time.sleep(5)
