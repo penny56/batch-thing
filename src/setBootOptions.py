@@ -47,36 +47,45 @@ class setBootOptions:
         for partName, sg_sv in self.bootCommDict.items():
             partObj = self.dpmObj.cpc.partitions.find(name = partName)
             sgName = sg_sv.split(' ')[0]
-            svUUID = sg_sv.split(' ')[-1]
+            svUUID = sg_sv.split(' ')[1]
+            svSecureBoot = sg_sv.split(' ')[2]
             loggerStage = ""
 
             try:
-                loggerStage += "\n0/5) partition status is: " + str(partObj.get_property('status')) + "\n"
+                loggerStage += "\n0/6) partition status is: " + str(partObj.get_property('status')) + "\n"
 
                 sgObj = self.dpmObj.cpc.list_associated_storage_groups(filter_args={'name' : sgName}).pop()
                 svObj = sgObj.storage_volumes.list(filter_args={'uuid' : svUUID}).pop()
-                loggerStage += "1/5) get svObj = " + str(svObj) + "done! \n"
+                loggerStage += "1/6) get svObj = " + str(svObj) + "done! \n"
                 time.sleep(1)
 
                 bootTempl = dict()
                 bootTempl['boot-storage-volume'] = svObj.uri
                 partObj.update_properties(bootTempl)
-                loggerStage += "2/5) set 'boot-storage-volume' = " + bootTempl['boot-storage-volume'] + "done! \n"
+                loggerStage += "2/6) set 'boot-storage-volume' = " + bootTempl['boot-storage-volume'] + "done! \n"
                 time.sleep(1)
 
                 bootTempl.clear()
                 # ############## this part is for the verify
-                loggerStage += "3/5) get 'boot-storage-volume' property: " + str(partObj.get_property('boot-storage-volume')) + "same with step #2? \n"
+                loggerStage += "3/6) get 'boot-storage-volume' property: " + str(partObj.get_property('boot-storage-volume')) + "same with step #2? \n"
                 # ##########################################
                 bootTempl['boot-device'] = 'storage-volume'
                 partObj.update_properties(bootTempl)
-                loggerStage += "4/5) set 'boot-device' = 'storage-volume' done! \n"
+                loggerStage += "4/6) set 'boot-device' = 'storage-volume' done! \n"
+                time.sleep(1)
+
+                bootTempl.clear()
+                # only the config file explicitly set the True with capital T, the variable will be set to False.
+                bootTempl['secure-boot'] = svSecureBoot == 'True' 
+                partObj.update_properties(bootTempl)
+                loggerStage += "5/6) set 'secure boot' = " + svSecureBoot + " done! \n"
+                self.logger.info("partition " + partName + " set boot option successful")
                 time.sleep(1)
 
                 bootTempl.clear()
                 bootTempl['boot-timeout'] = self.timeout
                 partObj.update_properties(bootTempl)
-                loggerStage += "5/5) set 'boot-timeout' = " + str(self.timeout) + "done! \n"
+                loggerStage += "6/6) set 'boot-timeout' = " + str(self.timeout) + "done! \n"
                 self.logger.info("partition " + partName + " set boot option successful")
                 time.sleep(1)
 
