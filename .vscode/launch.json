@@ -40,6 +40,24 @@
             "args": ["${workspaceFolder}/a257.cfg", "lclongpart2"],
             "console": "integratedTerminal",
             "justMyCode": true
+        },
+        {
+            "name": "a257-PL-create",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/createPartitionLinks.py",
+            "args": ["${workspaceFolder}/a257.cfg", "longparts"],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "a257-PL-delete",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/deletePartitionLinks.py",
+            "args": ["${workspaceFolder}/a257.cfg", "longparts"],
+            "console": "integratedTerminal",
+            "justMyCode": true
         }
     ]
 }

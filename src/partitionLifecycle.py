@@ -25,6 +25,8 @@ from attachStorageGroups import attachStorageGroups
 from setBootOptions import setBootOptions
 from startFcpStorageDiscovery import startFcpStorageDiscovery
 from startPartitions import startPartitions
+from createPartitionLinks import createPartitionLinks
+from deletePartitionLinks import deletePartitionLinks
 
 
 class partitionLifecycle:
@@ -44,16 +46,20 @@ class partitionLifecycle:
         print ("partitionLifecycle starting >>>")
         stopObj = stopPartitions(self.dpmObj, self.partNameList)
         delObj = deletePartitions(self.dpmObj, self.partNameList)
+        delplObj = deletePartitionLinks(self.dpmObj)
         createObj = createPartitions(self.dpmObj, self.partCommDict, self.partNameList)
         vNicObj = createvNics(self.dpmObj, self.vnicCommDict, self.partNameList)
         attachObj = attachStorageGroups(self.dpmObj, self.attachCommDict)
         bootObj = setBootOptions(self.dpmObj, self.bootCommDict)
         startFcpStorageDiscoveryObj = startFcpStorageDiscovery(self.dpmObj, self.bootCommDict)
         startObj = startPartitions(self.dpmObj, self.partNameList)
+        createPLObj = createPartitionLinks(self.dpmObj, self.partNameList)
+
 
         for i in range(self.counter):
             stopObj.run()
             delObj.run()
+            delplObj.run()
             createObj.run()
             vNicObj.run()
             attachObj.run()
@@ -61,6 +67,7 @@ class partitionLifecycle:
             # skip this case temporarily
             # startFcpStorageDiscoveryObj.run()
             startObj.run()
+            createPLObj.run()
             print ("partitionLifecycle sleeping -----------------------------------------------> 5s ...")
             time.sleep(5)
             

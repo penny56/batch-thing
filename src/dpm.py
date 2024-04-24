@@ -9,6 +9,7 @@ from configFile import configFile
 import requests.packages.urllib3
 requests.packages.urllib3.disable_warnings()
 
+from prsm2api import *
 
 def Singleton(cls):
     _instance = {}
@@ -37,5 +38,7 @@ class dpm:
         self.client = zhmcclient.Client(self.session)
         self.cpc = self.client.cpcs.find_by_name(self.cpc_name)
 
+        # hmc varible Dedicate for HMC API methods rather than zhmcclient package methods
+        self.hmc = createHMCConnection(hmcHost=self.hmc_host, userID=self.__user_id, userPassword=self.__user_psw)
         
     
