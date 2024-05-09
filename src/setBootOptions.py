@@ -56,18 +56,18 @@ class setBootOptions:
 
                 sgObj = self.dpmObj.cpc.list_associated_storage_groups(filter_args={'name' : sgName}).pop()
                 svObj = sgObj.storage_volumes.list(filter_args={'uuid' : svUUID}).pop()
-                loggerStage += "1/6) get svObj = " + str(svObj) + "done! \n"
+                loggerStage += "1/6) get svObj = " + str(svObj) + " done! \n"
                 time.sleep(1)
 
                 bootTempl = dict()
                 bootTempl['boot-storage-volume'] = svObj.uri
                 partObj.update_properties(bootTempl)
-                loggerStage += "2/6) set 'boot-storage-volume' = " + bootTempl['boot-storage-volume'] + "done! \n"
+                loggerStage += "2/6) set 'boot-storage-volume' = " + bootTempl['boot-storage-volume'] + " done! \n"
                 time.sleep(1)
 
                 bootTempl.clear()
                 # ############## this part is for the verify
-                loggerStage += "3/6) get 'boot-storage-volume' property: " + str(partObj.get_property('boot-storage-volume')) + "same with step #2? \n"
+                loggerStage += "3/6) get 'boot-storage-volume' property: " + str(partObj.get_property('boot-storage-volume')) + " same with step #2? \n"
                 # ##########################################
                 bootTempl['boot-device'] = 'storage-volume'
                 partObj.update_properties(bootTempl)
@@ -79,7 +79,6 @@ class setBootOptions:
                 bootTempl['secure-boot'] = svSecureBoot == 'True' 
                 partObj.update_properties(bootTempl)
                 loggerStage += "5/6) set 'secure boot' = " + svSecureBoot + " done! \n"
-                self.logger.info("partition " + partName + " set boot option successful")
                 time.sleep(1)
 
                 bootTempl.clear()
