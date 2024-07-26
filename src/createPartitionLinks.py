@@ -4,7 +4,7 @@ Created on Apr. 19, 2023
 @author: mayijie
 '''
 
-import sys, re
+import sys, re, os, time
 from configFile import configFile
 from dpm import dpm
 from log import log
@@ -65,8 +65,16 @@ class createPartitionLinks:
         
             try:
                 prsm2api.createPartitionLinks(self.dpmObj.hmc, plTempl)
-            except Exception as exc:
-                print ("error")
+                self.logger.info(plTempl["name"] + " created successful")
+            except Exception as e:
+                self.logger.info(plTempl["name"] + " created failed !!!")
+                os.system("echo 1 > ./%s" % ("disabled" + "." + self.dpmObj.cpc_name.lower()))
+                # Generate a log file dedicate for this failure.
+                loggerFailed = log.getlogger(time.strftime('%Y-%m-%d_%H-%M-%S_', time.localtime()) + self.dpmObj.cpc_name + '-' + self.__class__.__name__)
+                loggerFailed.info(plTempl["name"] + " partition link create failed. >>")
+                loggerFailed.info("<Exception sub-class>: [http_status],[reason]: <message> FORMAT >>")
+                loggerFailed.info("{}: {}".format(e.__class__.__name__, e))
+                loggerFailed.info("== The longevity script is stopped until you delete the disabled file ==")
             
             plTempl.clear()
             busConns.clear()

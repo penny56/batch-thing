@@ -45,6 +45,7 @@ class partitionLifecycle:
 
         print ("partitionLifecycle starting >>>")
         stopObj = stopPartitions(self.dpmObj, self.partNameList)
+        # we need to delete partition prior to delete PL, if we delete PL firstly, the partition will delete failed for busy with another operation.
         delObj = deletePartitions(self.dpmObj, self.partNameList)
         delplObj = deletePartitionLinks(self.dpmObj)
         createObj = createPartitions(self.dpmObj, self.partCommDict, self.partNameList)

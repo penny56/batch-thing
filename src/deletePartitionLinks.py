@@ -4,7 +4,7 @@ Created on Apr. 23, 2023
 @author: mayijie
 '''
 
-import sys
+import sys, os, time
 from configFile import configFile
 from dpm import dpm
 from log import log
@@ -41,8 +41,18 @@ class deletePartitionLinks:
                 plID = res[0]['object-uri'].replace('/api/partition-links/','')
                 try:
                     prsm2api.deletePartitionLinks(self.dpmObj.hmc, plID, {})
-                except Exception as exc:
-                    print ("error")
+                    self.logger.info(plName + " delete successful")
+                except Exception as e:
+                    self.logger.info(plName + " delete failed !!!")
+                    os.system("echo 1 > ./%s" % ("disabled" + "." + self.dpmObj.cpc_name.lower()))
+                    # Generate a log file dedicate for this failure.
+                    loggerFailed = log.getlogger(time.strftime('%Y-%m-%d_%H-%M-%S_', time.localtime()) + self.dpmObj.cpc_name + '-' + self.__class__.__name__)
+                    loggerFailed.info(plName + " partition link delete failed. >>")
+                    loggerFailed.info("<Exception sub-class>: [http_status],[reason]: <message> FORMAT >>")
+                    loggerFailed.info("{}: {}".format(e.__class__.__name__, e))
+                    loggerFailed.info("== The longevity script is stopped until you delete the disabled file ==")
+
+                    exit(1)
 
         print ("deletePartitionLinks completed ...")
 
