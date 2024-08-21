@@ -53,6 +53,7 @@ class deletePartitionLinks:
                     loggerFailed.info("== The longevity script is stopped until you delete the disabled file ==")
 
                     exit(1)
+            time.sleep(5)
 
         print ("deletePartitionLinks completed ...")
 
