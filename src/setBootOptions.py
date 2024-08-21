@@ -61,11 +61,11 @@ class setBootOptions:
 
                 bootTempl = dict()
                 bootTempl['boot-storage-volume'] = svObj.uri
-                partObj.update_properties(bootTempl)
+                #partObj.update_properties(bootTempl)
                 loggerStage += "2/6) set 'boot-storage-volume' = " + bootTempl['boot-storage-volume'] + " done! \n"
                 time.sleep(1)
 
-                bootTempl.clear()
+                #bootTempl.clear()
                 # ############## this part is for the verify
                 loggerStage += "3/6) get 'boot-storage-volume' property: " + str(partObj.get_property('boot-storage-volume')) + " same with step #2? \n"
                 loggerStage += "3/6) get 'boot-device' property: " + str(partObj.get_property('boot-device')) + " \n"
@@ -75,18 +75,18 @@ class setBootOptions:
                 loggerStage += "3/6) get 'access-diagnostic-sampling' property: " + str(partObj.get_property('access-diagnostic-sampling')) + " \n"
                 # ##########################################
                 bootTempl['boot-device'] = 'storage-volume'
-                partObj.update_properties(bootTempl)
+                #partObj.update_properties(bootTempl)
                 loggerStage += "4/6) set 'boot-device' = 'storage-volume' done! \n"
-                time.sleep(1)
+                #time.sleep(1)
 
-                bootTempl.clear()
+                #bootTempl.clear()
                 # only the config file explicitly set the True with capital T, the variable will be set to False.
                 bootTempl['secure-boot'] = svSecureBoot == 'True' 
-                partObj.update_properties(bootTempl)
+                #partObj.update_properties(bootTempl)
                 loggerStage += "5/6) set 'secure boot' = " + svSecureBoot + " done! \n"
-                time.sleep(1)
+                #time.sleep(1)
 
-                bootTempl.clear()
+                #bootTempl.clear()
                 bootTempl['boot-timeout'] = self.timeout
                 partObj.update_properties(bootTempl)
                 loggerStage += "6/6) set 'boot-timeout' = " + str(self.timeout) + "done! \n"
